@@ -25,6 +25,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,10 +48,15 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static final SlewRateLimiter filterX =
+      new SlewRateLimiter(Preferences.getDouble("joystickXAccelerationLimit", 20));
+  private static final SlewRateLimiter filterY =
+      new SlewRateLimiter(Preferences.getDouble("joystickYAccelerationLimit", 20));
 
   private DriveCommands() {}
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
+
     // Apply deadband
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
     Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
@@ -59,9 +65,13 @@ public class DriveCommands {
     linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
-    return new Pose2d(new Translation2d(), linearDirection)
-        .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-        .getTranslation();
+    Translation2d rawLinearVelocity =
+        new Pose2d(new Translation2d(), linearDirection)
+            .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+            .getTranslation();
+
+    return new Translation2d(
+        filterX.calculate(rawLinearVelocity.getX()), filterY.calculate(rawLinearVelocity.getY()));
   }
 
   /**
@@ -74,6 +84,7 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
+
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
