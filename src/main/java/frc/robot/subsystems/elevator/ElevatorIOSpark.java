@@ -14,9 +14,7 @@
 package frc.robot.subsystems.elevator;
 
 /**
- * Elevator IO implementation for Spark Max motor controller
- *  and Two Limit Switches conncected to the RoboRio.
+ * Elevator IO implementation for Spark Max motor controller and Two Limit Switches conncected to
+ * the RoboRio.
  */
-public class ElevatorIOSpark implements ElevatorIO {
-    
-}
+public class ElevatorIOSpark implements ElevatorIO {}
