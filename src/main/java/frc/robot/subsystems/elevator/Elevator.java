@@ -28,5 +28,13 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     elevatorIO.updateInputs(elevatorInputs);
     Logger.processInputs("Elevator", elevatorInputs);
+
+    // Calculate derived varibles
+
+    // Determine desired position / state
+
+    // Run Control Loops
+
+    // Apply Control Loops
   }
 }

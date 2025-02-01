@@ -13,6 +13,11 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.units.measure.MutCurrent;
+import edu.wpi.first.units.measure.MutVoltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -27,14 +32,14 @@ public interface ElevatorIO {
     public boolean motorAIsConnected = false;
     public double motorAPositionRad = 0.0;
     public double motorAVelocityRadPerSec = 0.0;
-    public double motorAAppliedVolts = 0.0;
-    public double motorACurrentAmps = 0.0;
+    public MutVoltage motorAAppliedVolts = Volts.mutable(0.0);
+    public MutCurrent motorACurrentAmps = Amps.mutable(0.0);
 
     public boolean motorBIsConnected = false;
     public double motorBPositionRad = 0.0;
     public double motorBVelocityRadPerSec = 0.0;
-    public double motorBAppliedVolts = 0.0;
-    public double motorBCurrentAmps = 0.0;
+    public MutVoltage motorBAppliedVolts = Volts.mutable(0.0);
+    public MutCurrent motorBCurrentAmps = Amps.mutable(0.0);
   }
 
   /** Updates the set of loggable inputs. */
