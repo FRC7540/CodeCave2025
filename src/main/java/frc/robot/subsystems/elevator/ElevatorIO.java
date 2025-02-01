@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -45,5 +46,5 @@ public interface ElevatorIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
-  public default void setMotorVoltage(double voltage) {}
+  public default void setMotorVoltage(Voltage voltage) {}
 }

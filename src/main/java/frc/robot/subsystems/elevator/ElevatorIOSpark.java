@@ -24,6 +24,7 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.util.SparkUtil.*;
 import java.util.function.DoubleSupplier;
@@ -96,5 +97,10 @@ public class ElevatorIOSpark implements ElevatorIO {
     /* Update values from limit switches */
     inputs.lowerLimitSwitch = lowerLimitDebouncer.calculate(lowerLimitSwitch.get());
     inputs.upperLimitSwitch = upperLimitDebouncer.calculate(upperLimitSwitch.get());
+  }
+
+  @Override
+  public void setMotorVoltage(Voltage voltage) {
+    motorA.setVoltage(voltage);
   }
 }
