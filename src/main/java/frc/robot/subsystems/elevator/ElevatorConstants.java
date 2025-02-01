@@ -1,8 +1,10 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
 
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 
 public class ElevatorConstants {
   /* Hardware Definitons */
@@ -13,4 +15,7 @@ public class ElevatorConstants {
 
   /* Motion Definitions */
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
+
+  /* Other Definitons */
+  public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
 }
