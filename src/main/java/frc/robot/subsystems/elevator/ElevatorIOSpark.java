@@ -23,6 +23,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -48,14 +50,25 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   public ElevatorIOSpark() {
     motorA = new SparkMax(ElevatorConstants.motorACANID, MotorType.kBrushless);
-    motorB = new SparkMax(ElevatorConstants.motorBCANDID, MotorType.kBrushless);
-
+    var motorAConfig = new SparkMaxConfig();
     motorAEncoder = motorA.getEncoder();
+    motorAConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
+        .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
+    motorAConfig
+        .encoder
+        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
+        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+
+    motorB = new SparkMax(ElevatorConstants.motorBCANDID, MotorType.kBrushless);
     motorBEncoder = motorB.getEncoder();
 
+    // Configure Limit switches
     lowerLimitSwitch = new DigitalInput(ElevatorConstants.lowerLimitDIOID);
     upperLimitSwitch = new DigitalInput(ElevatorConstants.upperLimitDIOID);
-
     upperLimitDebouncer = new Debouncer(ElevatorConstants.limitSwitchDebounceTime.in(Seconds));
     lowerLimitDebouncer = new Debouncer(ElevatorConstants.limitSwitchDebounceTime.in(Seconds));
   }
