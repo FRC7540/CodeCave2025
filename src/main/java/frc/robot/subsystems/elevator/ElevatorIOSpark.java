@@ -18,9 +18,12 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volt;
 import static frc.robot.util.SparkUtil.ifOk;
 import static frc.robot.util.SparkUtil.sparkStickyFault;
+import static frc.robot.util.SparkUtil.tryUntilOk;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -50,8 +53,9 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   public ElevatorIOSpark() {
     motorA = new SparkMax(ElevatorConstants.motorACANID, MotorType.kBrushless);
-    var motorAConfig = new SparkMaxConfig();
     motorAEncoder = motorA.getEncoder();
+
+    var motorAConfig = new SparkMaxConfig();
     motorAConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
@@ -62,6 +66,13 @@ public class ElevatorIOSpark implements ElevatorIO {
         .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+
+    tryUntilOk(
+        motorA,
+        0,
+        () ->
+            motorA.configure(
+                motorAConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     motorB = new SparkMax(ElevatorConstants.motorBCANDID, MotorType.kBrushless);
     motorBEncoder = motorB.getEncoder();
