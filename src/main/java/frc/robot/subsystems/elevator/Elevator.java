@@ -14,9 +14,15 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.PerUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -51,6 +57,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "Elevator/controlSystemActive")
   private boolean controlSystemActive;
+
+  /* We Should Probably do this instead */
+  PerUnit<DistanceUnit, AngleUnit> MeterPerRadian = Meters.per(Radian).one().times(1.0).unit();
+  
 
   /* This plant holds a model of our elevator, the system has the following properties:
    *
@@ -101,8 +111,28 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  public double calculateExtensionPercentage(Angle encoderRadianMeasurment) {
+  public static double calculateExtensionPercentage(Angle encoderRadianMeasurment) {
     return 0.0;
+  }
+
+    /**
+   * Calculate elevator radians
+   *
+   * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
+   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
+   */
+  public static Angle calculateElevatorAngleRadians(double extensionPercentage) {
+    return Radians.of(0.0);
+  }
+
+      /**
+   * Calculate elevator radians
+   *
+   * @param encoderRadianVelocityMeasurment The current measrument from the elevator encoder readings
+   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
+   */
+  public static AngularVelocity calculateElevatorAngleRadians(LinearVelocity velocity) {
+    return RadiansPerSecond.of(0.0);
   }
 
   /**
@@ -111,7 +141,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param groundExtension The current measrument of elevator ground extension
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  public double calculateExtensionPercentageFromGroundExtension(Distance groundExtension) {
+  public static double calculateExtensionPercentageFromGroundExtension(Distance groundExtension) {
     return 0.0;
   }
 
@@ -121,7 +151,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param displacement The current measurment of elevator Displacement
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  public double calculateExtensionPercentageFromDisplacement(Distance displacement) {
+  public static double calculateExtensionPercentageFromDisplacement(Distance displacement) {
     return 0.0;
   }
 
@@ -132,7 +162,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    *     elevator
    * @return Distance of elevator displacment, in WPILIB Units of "Distance"
    */
-  public Distance calculateDisplacement(double extensionPercentage) {
+  public static Distance calculateDisplacement(double extensionPercentage) {
     return Meters.of(0.0);
   }
 
@@ -143,7 +173,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    *     elevator
    * @return Distance of elevator ground extension, in WPILIB Units of "Distance"
    */
-  public Distance calculateGroundExtension(double extensionPercentage) {
+  public static Distance calculateGroundExtension(double extensionPercentage) {
     return Meters.of(0.0);
   }
 
