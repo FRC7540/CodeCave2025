@@ -31,7 +31,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.util.SparkUtil.*;
 import java.util.function.DoubleSupplier;
 
 /**
