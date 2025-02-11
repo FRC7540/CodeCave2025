@@ -29,4 +29,6 @@ public class EndEffector extends SubsystemBase {
     endeffectorio.updateInputs(endeffectorinputs);
     Logger.processInputs("EndEffector", endeffectorinputs);
   }
+
+  public void setTargetPosition(double targetPosition) {}
 }

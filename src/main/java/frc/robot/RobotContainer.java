@@ -29,6 +29,12 @@ import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIO;
+import frc.robot.subsystems.endeffector.EndEffectorIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -40,6 +46,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Elevator elevator;
+  private final EndEffector endEffector;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -59,6 +67,8 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
+        elevator = new Elevator(new ElevatorIOSpark());
+        endEffector = new EndEffector(new EndEffectorIOSpark());
         break;
 
       case SIM:
@@ -70,6 +80,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        elevator = new Elevator(new ElevatorIO() {});
+        endEffector = new EndEffector(new EndEffectorIO() {});
         break;
 
       default:
@@ -81,6 +93,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
+        endEffector = new EndEffector(new EndEffectorIO() {});
         break;
     }
 
