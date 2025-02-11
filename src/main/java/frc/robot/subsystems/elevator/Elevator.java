@@ -63,6 +63,12 @@ public class Elevator extends SubsystemBase {
     Logger.processInputs("Elevator", elevatorInputs);
     // Calculate derived varibles
 
+    // For now...
+    double positionRadians = 0.0;
+    extensionPercentage = calculateExtensionPercentage(positionRadians);
+    displacment = calculateDisplacement(extensionPercentage);
+    groundExtension = calculateGroundExtension(extensionPercentage);
+
     // Determine desired position / state
 
     // Run Control Loops
