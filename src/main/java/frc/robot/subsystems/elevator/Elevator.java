@@ -98,7 +98,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  private double calculateExtensionPercentage(double encoderRadianMeasurment) {
+  public double calculateExtensionPercentage(double encoderRadianMeasurment) {
     return 0.0;
   }
 
@@ -108,7 +108,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param groundExtension The current measrument of elevator ground extension
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  private double calculateExtensionPercentageFromGroundExtension(Distance groundExtension) {
+  public double calculateExtensionPercentageFromGroundExtension(Distance groundExtension) {
     return 0.0;
   }
 
@@ -118,7 +118,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param displacement The current measurment of elevator Displacement
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  private double calculateExtensionPercentageFromDisplacement(Distance displacement) {
+  public double calculateExtensionPercentageFromDisplacement(Distance displacement) {
     return 0.0;
   }
 
@@ -129,7 +129,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    *     elevator
    * @return Distance of elevator displacment, in WPILIB Units of "Distance"
    */
-  private Distance calculateDisplacement(double extensionPercentage) {
+  public Distance calculateDisplacement(double extensionPercentage) {
     return Meters.of(0.0);
   }
 
@@ -140,7 +140,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    *     elevator
    * @return Distance of elevator ground extension, in WPILIB Units of "Distance"
    */
-  private Distance calculateGroundExtension(double extensionPercentage) {
+  public Distance calculateGroundExtension(double extensionPercentage) {
     return Meters.of(0.0);
   }
 
