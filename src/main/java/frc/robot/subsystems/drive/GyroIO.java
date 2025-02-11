@@ -14,9 +14,10 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface GyroIO {
+public interface GyroIO extends AutoClosing {
   @AutoLog
   public static class GyroIOInputs {
     public boolean connected = false;

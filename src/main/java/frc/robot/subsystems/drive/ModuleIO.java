@@ -14,9 +14,10 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ModuleIO {
+public interface ModuleIO extends AutoClosing {
   @AutoLog
   public static class ModuleIOInputs {
     public boolean driveConnected = false;

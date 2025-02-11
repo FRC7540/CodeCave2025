@@ -17,6 +17,7 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.util.AutoClosing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -29,7 +30,7 @@ import java.util.function.DoubleSupplier;
  * <p>This version includes an overload for Spark signals, which checks for errors to ensure that
  * all measurements in the sample are valid.
  */
-public class SparkOdometryThread {
+public class SparkOdometryThread implements AutoClosing {
   private final List<SparkBase> sparks = new ArrayList<>();
   private final List<DoubleSupplier> sparkSignals = new ArrayList<>();
   private final List<DoubleSupplier> genericSignals = new ArrayList<>();
