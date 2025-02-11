@@ -13,9 +13,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
+import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
@@ -37,6 +44,10 @@ import frc.robot.subsystems.endeffector.EmptyEndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOSpark;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -50,7 +61,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final EndEffector endEffector;
-
+  private SwerveDriveSimulation driveSimulation = null;
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -74,14 +85,21 @@ public class RobotContainer {
         break;
 
       case SIM:
+        // create a maple-sim swerve drive simulation instance
+        this.driveSimulation =
+            new SwerveDriveSimulation(
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        // add the simulated drivetrain to the simulation field
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        // Sim robot, instantiate physics sim IO implementations
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOSim(driveSimulation.getModules()[0]),
+                new ModuleIOSim(driveSimulation.getModules()[1]),
+                new ModuleIOSim(driveSimulation.getModules()[2]),
+                new ModuleIOSim(driveSimulation.getModules()[3]));
         elevator = new Elevator(new ElevatorIOSim());
         endEffector = new EndEffector(new EndEffectorIOSim());
         break;
@@ -161,6 +179,45 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // Example Coral Placement Code
+    // TODO: delete these code for your own project
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      // L4 placement
+      controller
+          .y()
+          .onTrue(
+              Commands.runOnce(
+                  () ->
+                      SimulatedArena.getInstance()
+                          .addGamePieceProjectile(
+                              new ReefscapeCoralOnFly(
+                                  driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+                                  new Translation2d(0.4, 0),
+                                  driveSimulation
+                                      .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                  driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+                                  Meters.of(2),
+                                  MetersPerSecond.of(1.5),
+                                  Degrees.of(-80)))));
+      // L3 placement
+      controller
+          .b()
+          .onTrue(
+              Commands.runOnce(
+                  () ->
+                      SimulatedArena.getInstance()
+                          .addGamePieceProjectile(
+                              new ReefscapeCoralOnFly(
+                                  driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+                                  new Translation2d(0.4, 0),
+                                  driveSimulation
+                                      .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                  driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+                                  Meters.of(1.35),
+                                  MetersPerSecond.of(1.5),
+                                  Degrees.of(-60)))));
+    }
   }
 
   /**
@@ -170,5 +227,24 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    // drive.resetOdometry(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }
