@@ -76,7 +76,6 @@ public class EndEffectorIOSpark implements EndEffectorIO {
 
   @Override
   public void setMotorVoltage(Voltage voltage) {
-    // TODO Auto-generated method stub
-    EndEffectorIO.super.setMotorVoltage(voltage);
+    motor.setVoltage(voltage);
   }
 }

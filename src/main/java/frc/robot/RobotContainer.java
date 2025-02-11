@@ -30,10 +30,12 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSpark;
+import frc.robot.subsystems.elevator.EmptyElevatorIO;
+import frc.robot.subsystems.endeffector.EmptyEndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffector;
-import frc.robot.subsystems.endeffector.EndEffectorIO;
+import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -80,8 +82,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        elevator = new Elevator(new ElevatorIO() {});
-        endEffector = new EndEffector(new EndEffectorIO() {});
+        elevator = new Elevator(new ElevatorIOSim());
+        endEffector = new EndEffector(new EndEffectorIOSim());
         break;
 
       default:
@@ -93,8 +95,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        elevator = new Elevator(new ElevatorIO() {});
-        endEffector = new EndEffector(new EndEffectorIO() {});
+        elevator = new Elevator(new EmptyElevatorIO());
+        endEffector = new EndEffector(new EmptyEndEffectorIO());
         break;
     }
 

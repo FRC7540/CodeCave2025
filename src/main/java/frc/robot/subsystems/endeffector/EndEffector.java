@@ -18,10 +18,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class EndEffector extends SubsystemBase {
+public class EndEffector extends SubsystemBase implements AutoClosing {
   private final EndEffectorIO endeffectorio;
   private final EndEffectorInputsAutoLogged endeffectorinputs = new EndEffectorInputsAutoLogged();
   private final SysIdRoutine sysIdRoutine;

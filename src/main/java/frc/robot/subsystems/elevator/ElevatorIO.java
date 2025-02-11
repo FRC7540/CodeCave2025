@@ -19,9 +19,10 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ElevatorIO {
+public interface ElevatorIO extends AutoClosing {
 
   @AutoLog
   public static class ElevatorIOInputs {
