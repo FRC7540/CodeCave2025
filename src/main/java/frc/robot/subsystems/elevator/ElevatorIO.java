@@ -13,9 +13,10 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutCurrent;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
@@ -32,14 +33,13 @@ public interface ElevatorIO extends AutoClosing {
 
     // Motor Values
     public boolean motorAIsConnected = false;
-    public double motorAPositionRad = 0.0;
-    public double motorAVelocityRadPerSec = 0.0;
+    public MutAngle motorAPositionRad = Radians.mutable(0);
+    public MutAngularVelocity motorAVelocityRadPerSec = RadiansPerSecond.mutable(0);
     public MutVoltage motorAAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorACurrentAmps = Amps.mutable(0.0);
-
     public boolean motorBIsConnected = false;
-    public double motorBPositionRad = 0.0;
-    public double motorBVelocityRadPerSec = 0.0;
+    public MutAngle motorBPositionRad = Radians.mutable(0);
+    public MutAngularVelocity motorBVelocityRadPerSec = RadiansPerSecond.mutable(0);
     public MutVoltage motorBAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorBCurrentAmps = Amps.mutable(0.0);
   }

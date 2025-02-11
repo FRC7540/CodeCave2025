@@ -14,7 +14,9 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -80,7 +82,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     // Calculate derived varibles
 
     // For now...
-    double positionRadians = 0.0;
+
+    Angle positionRadians = Radians.of(0.0);
     extensionPercentage = calculateExtensionPercentage(positionRadians);
     displacment = calculateDisplacement(extensionPercentage);
     groundExtension = calculateGroundExtension(extensionPercentage);
@@ -98,7 +101,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
-  public double calculateExtensionPercentage(double encoderRadianMeasurment) {
+  public double calculateExtensionPercentage(Angle encoderRadianMeasurment) {
     return 0.0;
   }
 

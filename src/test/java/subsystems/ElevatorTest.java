@@ -2,15 +2,18 @@ package subsystems;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.EmptyElevatorIO;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,58 +36,47 @@ class ElevatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("doubleStreamWrapper")
-  void calculateExtensionPercentageBoundsCheck(double argument) {
+  @MethodSource("angleStreamWrapper")
+  void calculateExtensionPercentageBoundsCheck(Angle argument) {
     assert 0.0 <= elevator.calculateExtensionPercentage(argument);
     assert elevator.calculateExtensionPercentage(argument) <= 1.0;
   }
 
   @ParameterizedTest
-  @MethodSource("doubleStreamWrapper")
-  void calculateExtensionPercentageFromGroundExtensionBoundsCheck(double argument) {
-    try {
-      assert 0.0
-          <= elevator.calculateExtensionPercentageFromGroundExtension(Centimeters.of(argument));
-      assert elevator.calculateExtensionPercentageFromGroundExtension(Centimeters.of(argument))
-          <= 1.0;
-    } catch (java.util.ConcurrentModificationException e) {
+  @MethodSource("distanceStreamWrapper")
+  void calculateExtensionPercentageFromGroundExtensionBoundsCheck(Distance argument) {
 
-    }
+    assert 0.0 <= elevator.calculateExtensionPercentageFromGroundExtension(argument);
+    assert elevator.calculateExtensionPercentageFromGroundExtension(argument) <= 1.0;
   }
 
   @ParameterizedTest
-  @MethodSource("doubleStreamWrapper")
-  void calculateExtensionPercentageFromDisplacementBoundsCheck(double argument) {
-    try {
-      assert 0.0 <= elevator.calculateExtensionPercentageFromDisplacement(Centimeters.of(argument));
-      assert elevator.calculateExtensionPercentageFromDisplacement(Centimeters.of(argument)) <= 1.0;
-    } catch (java.util.ConcurrentModificationException e) {
-    }
+  @MethodSource("distanceStreamWrapper")
+  void calculateExtensionPercentageFromDisplacementBoundsCheck(Distance argument) {
+
+    assert 0.0 <= elevator.calculateExtensionPercentageFromDisplacement(argument);
+    assert elevator.calculateExtensionPercentageFromDisplacement(argument) <= 1.0;
   }
 
   @ParameterizedTest
   @MethodSource("extensionPercentageWrapper")
   void calculateDisplacementBoundsCheck(double argument) {
-    try {
-      assert 0.0 <= elevator.calculateDisplacement(argument).in(Meters);
-      assert elevator.calculateDisplacement(argument).in(Meters) <= 10.0;
-    } catch (java.util.ConcurrentModificationException e) {
-    }
+
+    assert 0.0 <= elevator.calculateDisplacement(argument).in(Meters);
+    assert elevator.calculateDisplacement(argument).in(Meters) <= 10.0;
   }
 
   @ParameterizedTest
   @MethodSource("extensionPercentageWrapper")
   void calculateGroundExtensionBoundsCheck(double argument) {
-    try {
-      assert 0.0 <= elevator.calculateGroundExtension(argument).in(Meters);
-      assert elevator.calculateGroundExtension(argument).in(Meters) <= 10.0;
-    } catch (java.util.ConcurrentModificationException e) {
-    }
+
+    assert 0.0 <= elevator.calculateGroundExtension(argument).in(Meters);
+    assert elevator.calculateGroundExtension(argument).in(Meters) <= 10.0;
   }
 
   @ParameterizedTest
-  @MethodSource("doubleStreamWrapper")
-  void elevatorCalculationUnityTest(double argument) {
+  @MethodSource("angleStreamWrapper")
+  void elevatorCalculationUnityTest(Angle argument) {
     double extensionPercentage = elevator.calculateExtensionPercentage(argument);
     Distance groundExtension = elevator.calculateGroundExtension(extensionPercentage);
     Distance displacment = elevator.calculateDisplacement(extensionPercentage);
@@ -96,8 +88,12 @@ class ElevatorTest {
     assertEquals(extensionPercentage, fromdisplacment, DELTA);
   }
 
-  static DoubleStream doubleStreamWrapper() {
-    return Arrays.stream(new Random().doubles(25, 0.0, 250.5).toArray());
+  static Stream<Angle> angleStreamWrapper() {
+    return new Random().doubles(25, 0.0, 250.5).boxed().map(Radians::of);
+  }
+
+  static Stream<Distance> distanceStreamWrapper() {
+    return new Random().doubles(25, 0.0, 500.5).boxed().map(Centimeters::of);
   }
 
   static DoubleStream extensionPercentageWrapper() {

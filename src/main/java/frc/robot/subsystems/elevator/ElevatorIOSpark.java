@@ -13,12 +13,9 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Amp;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volt;
-import static frc.robot.util.SparkUtil.ifOk;
-import static frc.robot.util.SparkUtil.sparkStickyFault;
-import static frc.robot.util.SparkUtil.tryUntilOk;
+import static edu.wpi.first.units.Units.*;
+import static frc.robot.util.ExtraUnits.*;
+import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -110,30 +107,42 @@ public class ElevatorIOSpark implements ElevatorIO {
 
     /* Update values from Motor A */
     sparkStickyFault = false;
-    ifOk(motorA, motorAEncoder::getPosition, (value) -> inputs.motorAPositionRad = value);
-    ifOk(motorA, motorAEncoder::getVelocity, (value) -> inputs.motorAVelocityRadPerSec = value);
+    ifOk(
+        motorA,
+        motorAEncoder::getPosition,
+        (value) -> inputs.motorAPositionRad.mut_replace(value, Rotations));
+    ifOk(
+        motorA,
+        motorAEncoder::getVelocity,
+        (value) -> inputs.motorAVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         motorA,
         new DoubleSupplier[] {motorA::getAppliedOutput, motorA::getBusVoltage},
-        (values) -> inputs.motorAAppliedVolts.mut_replace(values[0] * values[1], Volt));
+        (values) -> inputs.motorAAppliedVolts.mut_replace(values[0] * values[1], Volts));
     ifOk(
         motorA,
         motorA::getOutputCurrent,
-        (value) -> inputs.motorACurrentAmps.mut_replace(value, Amp));
+        (value) -> inputs.motorACurrentAmps.mut_replace(value, Amps));
     inputs.motorAIsConnected = motorAConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update Values from Motor B */
     sparkStickyFault = false;
-    ifOk(motorB, motorBEncoder::getPosition, (value) -> inputs.motorBPositionRad = value);
-    ifOk(motorB, motorBEncoder::getVelocity, (value) -> inputs.motorBVelocityRadPerSec = value);
+    ifOk(
+        motorB,
+        motorBEncoder::getPosition,
+        (value) -> inputs.motorBPositionRad.mut_replace(value, Rotations));
+    ifOk(
+        motorB,
+        motorBEncoder::getVelocity,
+        (value) -> inputs.motorBVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         motorB,
         new DoubleSupplier[] {motorB::getAppliedOutput, motorB::getBusVoltage},
-        (values) -> inputs.motorBAppliedVolts.mut_replace(values[0] * values[1], Volt));
+        (values) -> inputs.motorBAppliedVolts.mut_replace(values[0] * values[1], Volts));
     ifOk(
         motorB,
         motorB::getOutputCurrent,
-        (value) -> inputs.motorBCurrentAmps.mut_replace(value, Amp));
+        (value) -> inputs.motorBCurrentAmps.mut_replace(value, Amps));
     inputs.motorBIsConnected = motorBConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update values from limit switches */
