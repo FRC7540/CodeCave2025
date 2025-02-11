@@ -63,7 +63,10 @@ public class RobotContainer {
   private final EndEffector endEffector;
   private SwerveDriveSimulation driveSimulation = null;
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController =
+      new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
+  private final CommandXboxController operatorController =
+      new CommandXboxController(Constants.HID.OPERATOR_CONTROLLER_ID);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -152,25 +155,25 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -184,7 +187,7 @@ public class RobotContainer {
     // TODO: delete these code for your own project
     if (Constants.currentMode == Constants.Mode.SIM) {
       // L4 placement
-      controller
+      driverController
           .y()
           .onTrue(
               Commands.runOnce(
@@ -201,7 +204,7 @@ public class RobotContainer {
                                   MetersPerSecond.of(1.5),
                                   Degrees.of(-80)))));
       // L3 placement
-      controller
+      driverController
           .b()
           .onTrue(
               Commands.runOnce(

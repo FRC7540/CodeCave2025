@@ -34,4 +34,9 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public final class HID {
+    public static final int DRIVER_CONTROLLER_ID = 0;
+    public static final int OPERATOR_CONTROLLER_ID = 1;
+  }
 }
