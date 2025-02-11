@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.endeffector;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,7 +60,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     /* Apply the values */
   }
 
-  public void setTargetPosition(double targetPosition) {}
+  public void setTargetPosition(Angle targetAngle) {}
 
   /**
    * Enables or disabled active control of the elevator by the elevator subsystem

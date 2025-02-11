@@ -1,7 +1,9 @@
 package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volt;
+import static frc.robot.util.ExtraUnits.RotationsPerMinute;
 import static frc.robot.util.SparkUtil.ifOk;
 import static frc.robot.util.SparkUtil.sparkStickyFault;
 import static frc.robot.util.SparkUtil.tryUntilOk;
@@ -55,8 +57,14 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   @Override
   public void updateInputs(EndEffectorInputs inputs) {
     sparkStickyFault = false;
-    ifOk(motor, motorEncoder::getPosition, (value) -> inputs.motorPositionRad = value);
-    ifOk(motor, motorEncoder::getVelocity, (value) -> inputs.motorVelocityRadPerSec = value);
+    ifOk(
+        motor,
+        motorEncoder::getPosition,
+        (value) -> inputs.motorPositionRad.mut_replace(value, Rotations));
+    ifOk(
+        motor,
+        motorEncoder::getVelocity,
+        (value) -> inputs.motorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         motor,
         new DoubleSupplier[] {motor::getAppliedOutput, motor::getBusVoltage},
@@ -67,11 +75,12 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     ifOk(
         motor,
         endEffectorEncoder::getPosition,
-        (value) -> inputs.endEffectorAbsolutePositionRad = value);
+        (value) -> inputs.endEffectorAbsolutePositionRad.mut_replace(value, Rotations));
     ifOk(
         motor,
         endEffectorEncoder::getVelocity,
-        (value) -> inputs.enfEffectorAbsoluteVelocityRadPerSec = value);
+        (value) ->
+            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
   }
 
   @Override

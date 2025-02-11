@@ -1,11 +1,8 @@
 package frc.robot.subsystems.endeffector;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.units.measure.MutCurrent;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -18,13 +15,13 @@ public interface EndEffectorIO extends AutoClosing {
 
     // Motor Values
     public boolean motorIsConnected = false;
-    public double motorPositionRad = 0.0;
-    public double motorVelocityRadPerSec = 0.0;
+    public MutAngle motorPositionRad = Radians.mutable(0.0);
+    public MutAngularVelocity motorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
     public MutVoltage motorAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorCurrentAmps = Amps.mutable(0.0);
 
-    public double endEffectorAbsolutePositionRad = 0.0;
-    public double enfEffectorAbsoluteVelocityRadPerSec = 0.0;
+    public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);
+    public MutAngularVelocity enfEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
   }
 
   /** Updates the set of loggable inputs. */
