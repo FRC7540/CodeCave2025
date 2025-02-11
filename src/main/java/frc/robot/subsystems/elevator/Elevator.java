@@ -19,13 +19,16 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
   private final ElevatorIO elevatorIO;
   private final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
+  private final SysIdRoutine sysIdRoutine;
 
   /* Elevator State */
   /* extensionPercentage: a Value between 0 and 1 that represents the current extension of the elevator */
@@ -55,6 +58,18 @@ public class Elevator extends SubsystemBase {
 
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
+    // Create the SysId routine
+    sysIdRoutine =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null, // Use default config
+                (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> this.runVolts(voltage),
+                null, // No log consumer, since data is recorded by AdvantageKit
+                this));
   }
 
   @Override
@@ -182,6 +197,11 @@ public class Elevator extends SubsystemBase {
     elevatorIO.setMotorVoltage(voltage);
   }
 
+  public void runVolts(Voltage voltage) {
+    this.setControlsActive(false);
+    this.driveVoltage(voltage);
+  }
+
   /**
    * @return Status of the elevator lower limit switch
    */
@@ -194,5 +214,22 @@ public class Elevator extends SubsystemBase {
    */
   public boolean getUpperLimitSwitch() {
     return this.elevatorInputs.upperLimitSwitch;
+  }
+
+  /**
+   * @param direction SysIdDirection for routine
+   * @return Command that runs the sysid routine requested
+   */
+  public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+    // The methods below return Command objects
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * @param direction SysIdDirection for routine
+   * @return Command that runs the sysid routine requested
+   */
+  public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
   }
 }
