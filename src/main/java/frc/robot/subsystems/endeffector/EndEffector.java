@@ -14,15 +14,21 @@
 package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class EndEffector extends SubsystemBase {
   private final EndEffectorIO endeffectorio;
   private final EndEffectorInputsAutoLogged endeffectorinputs = new EndEffectorInputsAutoLogged();
   private final SysIdRoutine sysIdRoutine;
+
+  /* Should we be runnning the control system? */
+  @AutoLogOutput(key = "EndEffector/controlSystemActive")
+  private boolean controlSystemActive;
 
   public EndEffector(EndEffectorIO endeffectorio) {
     this.endeffectorio = endeffectorio;
@@ -54,7 +60,48 @@ public class EndEffector extends SubsystemBase {
 
   public void setTargetPosition(double targetPosition) {}
 
+  /**
+   * Enables or disabled active control of the elevator by the elevator subsystem
+   *
+   * @param active If true, the control system will be activated and we will drive the elevator to
+   *     the current setpoints
+   */
+  public void setControlsActive(boolean active) {
+    this.controlSystemActive = active;
+  }
+
+  /**
+   * Gets the current status of the elevator control system
+   *
+   * @see setControlsActive to set the current state of the control system
+   */
+  public boolean getControlsActive() {
+    return this.controlSystemActive;
+  }
+
+  /**
+   * Drives the elevator motors at a specified voltage, used mainly for testing/tuning
+   *
+   * @see setControlsActive The elevator control system must be disabled for you to use this
+   *     function!
+   * @param voltage Elevator motor voltages
+   */
+  public void driveVoltage(Voltage voltage) {
+    if (this.controlSystemActive == true) {
+      DriverStation.reportWarning(
+          "You must deactivate the end effector control systems before driving by voltage!", false);
+      return;
+    }
+    endeffectorio.setMotorVoltage(voltage);
+  }
+
+  /**
+   * Disables the control system gaurd and runs at the specified voltage
+   *
+   * @param voltage voltage to drive motor at
+   */
   public void runVolts(Voltage voltage) {
+    this.setControlsActive(false);
     endeffectorio.setMotorVoltage(voltage);
   }
 
