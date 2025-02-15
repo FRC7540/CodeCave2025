@@ -1,0 +1,3 @@
+WPIlib build to build it (from command thing)
+Connect to the robot wifi
+Top right red/infinity looking thing - wpi: deploy to build and then put the software on the robot.
