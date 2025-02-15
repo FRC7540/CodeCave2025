@@ -40,7 +40,7 @@ public class ElevatorConstants {
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
-
+  public static final Distance elevatorPositionDistanceFactor = Meters.of(1.0);
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
 
