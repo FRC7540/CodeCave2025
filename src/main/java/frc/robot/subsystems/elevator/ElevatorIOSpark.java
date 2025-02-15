@@ -49,7 +49,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   private void configureMotor(SparkBase motor) {
     var motorConfig = new SparkMaxConfig();
-    motorConfig //Sets up what the motor needs in order to move
+    motorConfig // Sets up what the motor needs in order to move
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
@@ -66,7 +66,6 @@ public class ElevatorIOSpark implements ElevatorIO {
         () ->
             motor.configure(
                 motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-
   }
 
   public ElevatorIOSpark() {
