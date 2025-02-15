@@ -60,7 +60,6 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   /* We Should Probably do this instead */
   PerUnit<DistanceUnit, AngleUnit> MeterPerRadian = Meters.per(Radian).one().times(1.0).unit();
-  
 
   /* This plant holds a model of our elevator, the system has the following properties:
    *
@@ -115,7 +114,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     return 0.0;
   }
 
-    /**
+  /**
    * Calculate elevator radians
    *
    * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
@@ -125,10 +124,11 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     return Radians.of(0.0);
   }
 
-      /**
+  /**
    * Calculate elevator radians
    *
-   * @param encoderRadianVelocityMeasurment The current measrument from the elevator encoder readings
+   * @param encoderRadianVelocityMeasurment The current measrument from the elevator encoder
+   *     readings
    * @return [0.0 <-> 1.0] The current extension percentage of the elevator
    */
   public static AngularVelocity calculateElevatorAngleRadians(LinearVelocity velocity) {
