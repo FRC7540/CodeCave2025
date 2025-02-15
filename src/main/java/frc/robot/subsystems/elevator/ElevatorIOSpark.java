@@ -154,4 +154,10 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void setMotorVoltage(Voltage voltage) {
     motorA.setVoltage(voltage);
   }
+
+  @Override
+  public void setZero() {
+    motorAEncoder.setPosition(0);
+    motorBEncoder.setPosition(0);
+  }
 }

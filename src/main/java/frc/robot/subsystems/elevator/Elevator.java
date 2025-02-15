@@ -263,4 +263,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
   }
+
+  public void setZero() {
+    elevatorIO.setZero();
+  }
 }

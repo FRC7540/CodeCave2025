@@ -48,4 +48,6 @@ public interface ElevatorIO extends AutoClosing {
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
   public default void setMotorVoltage(Voltage voltage) {}
+
+  public default void setZero() {}
 }
