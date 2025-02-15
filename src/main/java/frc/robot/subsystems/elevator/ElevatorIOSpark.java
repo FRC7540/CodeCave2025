@@ -47,7 +47,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final Debouncer upperLimitDebouncer;
   private final Debouncer lowerLimitDebouncer;
 
-  private void ConfigureMotor(SparkBase motor) {
+  private void configureMotor(SparkBase motor) {
     var motorConfig = new SparkMaxConfig();
     motorConfig //Sets up what the motor needs in order to move
         .idleMode(IdleMode.kBrake)
@@ -65,54 +65,18 @@ public class ElevatorIOSpark implements ElevatorIO {
         0,
         () ->
             motor.configure(
-                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters))
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
   }
 
   public ElevatorIOSpark() {
     motorA = new SparkMax(ElevatorConstants.motorACANID, MotorType.kBrushless);
     motorAEncoder = motorA.getEncoder();
-
-    var motorAConfig = new SparkMaxConfig();
-    motorAConfig
-        .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
-        .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
-    motorAConfig
-        .encoder
-        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
-        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
-
-    tryUntilOk(
-        motorA,
-        0,
-        () ->
-            motorA.configure(
-                motorAConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    configureMotor(motorA);
 
     motorB = new SparkMax(ElevatorConstants.motorBCANDID, MotorType.kBrushless);
     motorBEncoder = motorB.getEncoder();
-
-    var motorBConfig = new SparkMaxConfig();
-    motorBConfig
-        .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
-        .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
-    motorBConfig
-        .encoder
-        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
-        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
-
-    tryUntilOk(
-        motorB,
-        0,
-        () ->
-            motorB.configure(
-                motorBConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    configureMotor(motorB);
 
     // Configure Limit switches
     lowerLimitSwitch = new DigitalInput(ElevatorConstants.lowerLimitDIOID);
