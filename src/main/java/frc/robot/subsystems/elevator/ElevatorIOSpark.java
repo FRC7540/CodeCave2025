@@ -47,6 +47,28 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final Debouncer upperLimitDebouncer;
   private final Debouncer lowerLimitDebouncer;
 
+  private void ConfigureMotor(SparkBase motor) {
+    var motorConfig = new SparkMaxConfig();
+    motorConfig //Sets up what the motor needs in order to move
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
+        .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
+    motorConfig
+        .encoder
+        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
+        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+
+    tryUntilOk(
+        motor,
+        0,
+        () ->
+            motor.configure(
+                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters))
+
+  }
+
   public ElevatorIOSpark() {
     motorA = new SparkMax(ElevatorConstants.motorACANID, MotorType.kBrushless);
     motorAEncoder = motorA.getEncoder();
