@@ -81,9 +81,14 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     // Calculate derived varibles
     Distance elevatorExtension =
         elevatorInputs.motorAPositionRad.timesConversionFactor(
-            ElevatorConstants.elevatorExtensionConversionFactor);
+            ElevatorConstants.extensionConversionFactor);
 
     // Determine desired position / state
+
+    if (!this.controlSystemActive) {
+      /* We dont need to run the control loops, go ahead and return. Evrything after this should be control loops stuff */
+      return;
+    }
 
     // Run Control Loops
 

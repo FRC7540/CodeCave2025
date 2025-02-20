@@ -44,16 +44,14 @@ public class ElevatorConstants {
 
   /* Motion Definitions */
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
-  public static final double encoderPositionFactor = 1.0;
-  public static final double encoderVelocityFactor = 1.0;
 
   /* Motion Unit Definitons */
-  public static final Distance elevatorPositionDistanceFactor = Meters.of(1.0);
-  public static final LinearVelocity elevatorSpeedDistanceFactor = MetersPerSecond.of(1.0);
-  public static final Per<DistanceUnit, AngleUnit> elevatorExtensionConversionFactor =
-      Meters.one().div(Radians.one());
-  public static final Per<LinearVelocityUnit, AngularVelocityUnit>
-      elevatorVelocityConversionFactor = MetersPerSecond.one().div(RadiansPerSecond.one());
+  public static final Distance extensionFactor = Meters.of(1.0);
+  public static final LinearVelocity velocityFactor = MetersPerSecond.of(1.0);
+  public static final Per<DistanceUnit, AngleUnit> extensionConversionFactor =
+      extensionFactor.div(Radians.one());
+  public static final Per<LinearVelocityUnit, AngularVelocityUnit> velocityConversionFactor =
+      velocityFactor.div(RadiansPerSecond.one());
 
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
@@ -63,4 +61,7 @@ public class ElevatorConstants {
   public static final String simMaxAngleKey = "Elevator/simMaxAngle";
   public static final Mass carraigeMass = Kilograms.of(0.5);
   public static final Distance drumRadius = Inches.of(1.893);
+
+  public static final double simPositionStdDev = 0.05;
+  public static final double simVelocityStdDev = 0.05;
 }

@@ -56,12 +56,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
-    motorAConfig
-        .encoder
-        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
-        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+    motorAConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
         motorA,
@@ -78,12 +73,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
-    motorBConfig
-        .encoder
-        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
-        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+    motorBConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
         motorB,

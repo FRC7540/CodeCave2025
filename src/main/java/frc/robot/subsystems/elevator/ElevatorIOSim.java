@@ -28,8 +28,8 @@ public class ElevatorIOSim implements ElevatorIO {
           ElevatorConstants.maxHieght.in(Meters),
           true,
           0.0,
-          1.0,
-          1.0);
+          ElevatorConstants.simPositionStdDev,
+          ElevatorConstants.simVelocityStdDev);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
 
@@ -43,11 +43,11 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.motorAPositionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
             .timesConversionFactor(
-                ElevatorConstants.elevatorExtensionConversionFactor.reciprocal()));
+                ElevatorConstants.extensionConversionFactor.reciprocal()));
     inputs.motorAVelocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
             .timesConversionFactor(
-                ElevatorConstants.elevatorVelocityConversionFactor.reciprocal()));
+                ElevatorConstants.velocityConversionFactor.reciprocal()));
     inputs.motorAAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorACurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorAIsConnected = true;
@@ -55,11 +55,11 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.motorBPositionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
             .timesConversionFactor(
-                ElevatorConstants.elevatorExtensionConversionFactor.reciprocal()));
+                ElevatorConstants.extensionConversionFactor.reciprocal()));
     inputs.motorBVelocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
             .timesConversionFactor(
-                ElevatorConstants.elevatorVelocityConversionFactor.reciprocal()));
+                ElevatorConstants.velocityConversionFactor.reciprocal()));
     inputs.motorBAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorBCurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorBIsConnected = true;

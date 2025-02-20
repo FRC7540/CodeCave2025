@@ -39,12 +39,8 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
-    motorConfig
-        .encoder
-        .positionConversionFactor(ElevatorConstants.encoderPositionFactor)
-        .velocityConversionFactor(ElevatorConstants.encoderVelocityFactor)
-        .uvwMeasurementPeriod(10)
-        .uvwAverageDepth(2);
+        
+    motorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
         motor,
