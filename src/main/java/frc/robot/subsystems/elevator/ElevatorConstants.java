@@ -15,6 +15,11 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.DistanceUnit;
@@ -36,6 +41,7 @@ public class ElevatorConstants {
   public static final int upperLimitDIOID = 1;
   public static final Current elevatorMotorMaxCurrent = Amps.of(40);
   public static final Voltage elevatorMotorNominalVoltage = Volts.of(12.0);
+  public static final boolean invertMotorB = true;
 
   public static final Distance minHieght = Meters.of(0);
   public static final Distance maxHieght = Meters.of(5);
@@ -56,6 +62,19 @@ public class ElevatorConstants {
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
 
+  /* Control System Definitions */
+  public static final Time nominalLoopTime = Milliseconds.of(20);
+  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3, 3);
+  public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.01, 0.01);
+
+  public static final Distance maximumPositionExcusrsion = Meters.of(0.1);
+  public static final LinearVelocity maximumVecloityExcursion = MetersPerSecond.of(0.1);
+  public static final Vector<N2> stateExcursionToleranceMatrix =
+      VecBuilder.fill(
+          maximumPositionExcusrsion.in(Meters), maximumVecloityExcursion.in(MetersPerSecond));
+  public static final Voltage controlAuthority = Volts.of(12.0);
+  public static final Vector<N1> controlAuthorityMatrix =
+      VecBuilder.fill(controlAuthority.in(Volts));
   /* Sim Definitons */
   public static final Angle simMaxAngleBackup = Radians.of(250);
   public static final String simMaxAngleKey = "Elevator/simMaxAngle";

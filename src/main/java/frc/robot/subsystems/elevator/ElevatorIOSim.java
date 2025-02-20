@@ -18,7 +18,7 @@ public class ElevatorIOSim implements ElevatorIO {
           elevatorMotorSystem,
           ElevatorConstants.carraigeMass.in(Kilograms),
           ElevatorConstants.drumRadius.in(Meter),
-          1);
+          3.5);
 
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
@@ -42,24 +42,20 @@ public class ElevatorIOSim implements ElevatorIO {
 
     inputs.motorAPositionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
-            .timesConversionFactor(
-                ElevatorConstants.extensionConversionFactor.reciprocal()));
+            .timesConversionFactor(ElevatorConstants.extensionConversionFactor.reciprocal()));
     inputs.motorAVelocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
-            .timesConversionFactor(
-                ElevatorConstants.velocityConversionFactor.reciprocal()));
+            .timesConversionFactor(ElevatorConstants.velocityConversionFactor.reciprocal()));
     inputs.motorAAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorACurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorAIsConnected = true;
 
     inputs.motorBPositionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
-            .timesConversionFactor(
-                ElevatorConstants.extensionConversionFactor.reciprocal()));
+            .timesConversionFactor(ElevatorConstants.extensionConversionFactor.reciprocal()));
     inputs.motorBVelocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
-            .timesConversionFactor(
-                ElevatorConstants.velocityConversionFactor.reciprocal()));
+            .timesConversionFactor(ElevatorConstants.velocityConversionFactor.reciprocal()));
     inputs.motorBAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorBCurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorBIsConnected = true;

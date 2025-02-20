@@ -25,6 +25,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -74,6 +75,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
     motorBConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
+    motorBConfig.follow(motorA, ElevatorConstants.invertMotorB);
 
     tryUntilOk(
         motorB,
@@ -142,6 +144,14 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void setMotorVoltage(Voltage voltage) {
+    /* Apply motor hardstops */
+    if (lowerLimitDebouncer.calculate(lowerLimitSwitch.get())) {
+      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
+    }
+    if (upperLimitDebouncer.calculate(upperLimitSwitch.get())) {
+      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
+    }
+
     motorA.setVoltage(voltage);
   }
 

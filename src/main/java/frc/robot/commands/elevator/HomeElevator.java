@@ -9,8 +9,9 @@ import frc.robot.subsystems.elevator.Elevator;
 
 public class HomeElevator extends Command {
   private final Elevator elevator;
-  private final Alert notHome =
-      new Alert("Warning: Elevator not Homed, Homing command was preempted", AlertType.kWarning);
+  private final Alert unableToHomeAlert =
+      new Alert(
+          "Elevator homing procedure failed, Homing command was preempted", AlertType.kWarning);
 
   public HomeElevator(Elevator newElevator) {
     elevator = newElevator;
@@ -19,7 +20,8 @@ public class HomeElevator extends Command {
 
   @Override
   public void initialize() {
-    elevator.driveSpeed(MetersPerSecond.of(0.1));
+    elevator.setControlsActive(false);
+    elevator.setVelocity(MetersPerSecond.of(0.1));
   }
 
   @Override
@@ -27,12 +29,16 @@ public class HomeElevator extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.driveSpeed(MetersPerSecond.of(0));
+    elevator.setVelocity(MetersPerSecond.of(0));
     if (!interrupted) {
       elevator.setZero();
     } else {
-      notHome.set(true);
+      unableToHomeAlert.set(true);
+      elevator.setHomed(false);
+      return;
     }
+    elevator.setHomed(true);
+    elevator.resetControlLoops();
     elevator.setControlsActive(true);
   }
 
