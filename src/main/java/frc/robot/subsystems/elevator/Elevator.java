@@ -13,17 +13,9 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,7 +29,6 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   private final ElevatorIO elevatorIO;
   private final ElevatorIOInputsAutoLogged elevatorInputs = new ElevatorIOInputsAutoLogged();
   private final SysIdRoutine sysIdRoutine;
-  private final Per<DistanceUnit, AngleUnit> elevatorExtensionConversionFactor;
 
   /* Elevator State */
   /* extensionPercentage: a Value between 0 and 1 that represents the current extension of the elevator */
@@ -81,8 +72,6 @@ public class Elevator extends SubsystemBase implements AutoClosing {
                 (voltage) -> this.runVolts(voltage),
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
-    elevatorExtensionConversionFactor =
-        ElevatorConstants.elevatorPositionDistanceFactor.div(Radians.one());
   }
 
   @Override
@@ -91,87 +80,14 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     Logger.processInputs("Elevator", elevatorInputs);
     // Calculate derived varibles
     Distance elevatorExtension =
-        elevatorInputs.motorAPositionRad.timesConversionFactor(elevatorExtensionConversionFactor);
-    // For now...
+        elevatorInputs.motorAPositionRad.timesConversionFactor(
+            ElevatorConstants.elevatorExtensionConversionFactor);
 
     // Determine desired position / state
 
     // Run Control Loops
 
     // Apply Control Loops
-  }
-
-  /**
-   * Calculate elevator extension percentage
-   *
-   * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
-   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
-   */
-  public static double calculateExtensionPercentage(Angle encoderRadianMeasurment) {
-    return 0.0;
-  }
-
-  /**
-   * Calculate elevator radians
-   *
-   * @param encoderRadianMeasurment The current measrument from the elevator encoder readings
-   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
-   */
-  public static Angle calculateElevatorAngleRadians(double extensionPercentage) {
-    return Radians.of(0.0);
-  }
-
-  /**
-   * Calculate elevator radians
-   *
-   * @param encoderRadianVelocityMeasurment The current measrument from the elevator encoder
-   *     readings
-   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
-   */
-  public static AngularVelocity calculateElevatorAngleRadians(LinearVelocity velocity) {
-    return RadiansPerSecond.of(0.0);
-  }
-
-  /**
-   * Calculate elevator extension percentage
-   *
-   * @param groundExtension The current measrument of elevator ground extension
-   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
-   */
-  public static double calculateExtensionPercentageFromGroundExtension(Distance groundExtension) {
-    return 0.0;
-  }
-
-  /**
-   * Calculate elevator extension percentage
-   *
-   * @param displacement The current measurment of elevator Displacement
-   * @return [0.0 <-> 1.0] The current extension percentage of the elevator
-   */
-  public static double calculateExtensionPercentageFromDisplacement(Distance displacement) {
-    return 0.0;
-  }
-
-  /**
-   * Calculate elevator displacment
-   *
-   * @param extensionPercentage a Value between 0 and 1 that represents the current extension of the
-   *     elevator
-   * @return Distance of elevator displacment, in WPILIB Units of "Distance"
-   */
-  public static Distance calculateDisplacement(double extensionPercentage) {
-    return Meters.of(0.0);
-  }
-
-  /**
-   * Calculate elevator ground extension
-   *
-   * @param extensionPercentage a Value between 0 and 1 that represents the current extension of the
-   *     elevator
-   * @return Distance of elevator ground extension, in WPILIB Units of "Distance"
-   */
-  public static Distance calculateGroundExtension(double extensionPercentage) {
-    return Meters.of(0.0);
   }
 
   /**
@@ -266,5 +182,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   public void setZero() {
     elevatorIO.setZero();
+  }
+
+  public static Angle calculateElevatorAngleRadians(double extensionPercentage2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'calculateElevatorAngleRadians'");
   }
 }

@@ -1,8 +1,6 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.util.ExtraUnits.*;
-import static frc.robot.util.SparkUtil.*;
 
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -42,21 +40,26 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.lowerLimitSwitch = elevatorSim.hasHitLowerLimit();
     inputs.upperLimitSwitch = elevatorSim.hasHitUpperLimit();
 
-    double extensionPercentage =
-        Elevator.calculateExtensionPercentageFromDisplacement(Meters.of(elevatorSim.getOutput(0)));
-
     inputs.motorAPositionRad.mut_replace(
-        Elevator.calculateElevatorAngleRadians(extensionPercentage));
+        Meters.of(elevatorSim.getPositionMeters())
+            .timesConversionFactor(
+                ElevatorConstants.elevatorExtensionConversionFactor.reciprocal()));
     inputs.motorAVelocityRadPerSec.mut_replace(
-        elevatorSim.getVelocityMetersPerSecond(), RotationsPerMinute);
+        MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
+            .timesConversionFactor(
+                ElevatorConstants.elevatorVelocityConversionFactor.reciprocal()));
     inputs.motorAAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorACurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorAIsConnected = true;
 
     inputs.motorBPositionRad.mut_replace(
-        Elevator.calculateElevatorAngleRadians(extensionPercentage));
+        Meters.of(elevatorSim.getPositionMeters())
+            .timesConversionFactor(
+                ElevatorConstants.elevatorExtensionConversionFactor.reciprocal()));
     inputs.motorBVelocityRadPerSec.mut_replace(
-        elevatorSim.getVelocityMetersPerSecond(), RotationsPerMinute);
+        MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
+            .timesConversionFactor(
+                ElevatorConstants.elevatorVelocityConversionFactor.reciprocal()));
     inputs.motorBAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
     inputs.motorBCurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
     inputs.motorBIsConnected = true;

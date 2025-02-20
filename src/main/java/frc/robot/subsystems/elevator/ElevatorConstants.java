@@ -15,11 +15,16 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.LinearVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 
@@ -36,11 +41,20 @@ public class ElevatorConstants {
   public static final Distance maxHieght = Meters.of(5);
 
   public static final double gerboxReduction = 1.0;
+
   /* Motion Definitions */
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
+
+  /* Motion Unit Definitons */
   public static final Distance elevatorPositionDistanceFactor = Meters.of(1.0);
+  public static final LinearVelocity elevatorSpeedDistanceFactor = MetersPerSecond.of(1.0);
+  public static final Per<DistanceUnit, AngleUnit> elevatorExtensionConversionFactor =
+      Meters.one().div(Radians.one());
+  public static final Per<LinearVelocityUnit, AngularVelocityUnit>
+      elevatorVelocityConversionFactor = MetersPerSecond.one().div(RadiansPerSecond.one());
+
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
 
