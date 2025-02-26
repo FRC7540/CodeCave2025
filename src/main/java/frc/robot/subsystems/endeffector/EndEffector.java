@@ -13,12 +13,24 @@
 
 package frc.robot.subsystems.endeffector;
 
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.estimator.KalmanFilter;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.LinearSystemLoop;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -31,6 +43,43 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "EndEffector/controlSystemActive")
   private boolean controlSystemActive;
+
+  /* This holds a model of our gearbox */
+  private final DCMotor positonalMotorSystem =
+      DCMotor.getNEO(2).withReduction(EndEffectorConstants.positonalDriveGearing);
+  /* This plant holds a model of our elevator, the system has the following properties:
+   *
+   * Eventually, we can replace this with a linear system id based on sysid data form the elevator itself.
+   *
+   * States: [Position, Velocity] (Of the elevator)
+   * Inputs: [Voltage] (Input to the plant)
+   * Outputs: [Position] (Current Position of the plant)
+   */
+  private final LinearSystem<N2, N1, N2> plant =
+      LinearSystemId.createSingleJointedArmSystem(
+          positonalMotorSystem,
+          EndEffectorConstants.mechanismMOI.in(KilogramSquareMeters),
+          EndEffectorConstants.positonalDriveGearing);
+
+  private final KalmanFilter<N2, N1, N2> observer =
+      new KalmanFilter<>(
+          Nat.N2(),
+          Nat.N2(),
+          plant,
+          EndEffectorConstants.stateCovarianceMatrix,
+          EndEffectorConstants.measurmentCovarianceMatrix,
+          EndEffectorConstants.nominalLoopTime.in(Seconds));
+
+  private final LinearQuadraticRegulator<N2, N1, N2> controller =
+      new LinearQuadraticRegulator<>(
+          plant,
+          EndEffectorConstants.stateExcursionToleranceMatrix,
+          EndEffectorConstants.controlAuthorityMatrix,
+          EndEffectorConstants.nominalLoopTime.in(Seconds));
+
+  private final LinearSystemLoop<N2, N1, N2> loop =
+      new LinearSystemLoop<>(
+          plant, controller, observer, 12.0, EndEffectorConstants.nominalLoopTime.in(Seconds));
 
   public EndEffector(EndEffectorIO endeffectorio) {
     this.endeffectorio = endeffectorio;
@@ -46,6 +95,11 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 (voltage) -> this.runVolts(voltage),
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
+
+    /* Configure LQR */
+    if (Robot.isReal()) {
+      controller.latencyCompensate(plant, EndEffectorConstants.nominalLoopTime.in(Seconds), 0.025);
+    }
   }
 
   @Override

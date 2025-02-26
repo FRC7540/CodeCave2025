@@ -30,7 +30,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
 
   public EndEffectorIOSpark() {
-    motor = new SparkMax(EndEffectorConstants.motorCANID, MotorType.kBrushless);
+    motor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
     motorEncoder = motor.getEncoder();
     endEffectorEncoder = motor.getAbsoluteEncoder();
 
