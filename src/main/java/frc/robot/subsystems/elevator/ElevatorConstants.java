@@ -52,8 +52,8 @@ public class ElevatorConstants {
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
 
   /* Motion Unit Definitons */
-  public static final Distance extensionFactor = Meters.of(1.0);
-  public static final LinearVelocity velocityFactor = MetersPerSecond.of(1.0);
+  public static final Distance extensionFactor = Meters.of(0.1);
+  public static final LinearVelocity velocityFactor = MetersPerSecond.of(0.1);
   public static final Per<DistanceUnit, AngleUnit> extensionConversionFactor =
       extensionFactor.div(Radians.one());
   public static final Per<LinearVelocityUnit, AngularVelocityUnit> velocityConversionFactor =
@@ -64,10 +64,10 @@ public class ElevatorConstants {
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);
-  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3, 3);
-  public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.01, 0.01);
+  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3.0, 3.0);
+  public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.1, 0.1);
 
-  public static final Distance maximumPositionExcusrsion = Meters.of(0.1);
+  public static final Distance maximumPositionExcusrsion = Meters.of(0.05);
   public static final LinearVelocity maximumVecloityExcursion = MetersPerSecond.of(0.1);
   public static final Vector<N2> stateExcursionToleranceMatrix =
       VecBuilder.fill(
@@ -81,6 +81,6 @@ public class ElevatorConstants {
   public static final Mass carraigeMass = Kilograms.of(0.5);
   public static final Distance drumRadius = Inches.of(1.893);
 
-  public static final double simPositionStdDev = 0.05;
-  public static final double simVelocityStdDev = 0.05;
+  public static final double simPositionStdDev = 0.00005;
+  public static final double simVelocityStdDev = 0.00005;
 }

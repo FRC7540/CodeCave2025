@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -56,13 +57,9 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   @AutoLogOutput(key = "Elevator/velocity")
   private MutLinearVelocity elevatorVelocity = MetersPerSecond.mutable(0.0);
 
-  /* displacment: The current displacment of the carraige, from the home position (Fully Retracted) */
+  /* displacment: Desired Elevator Extension */
   @AutoLogOutput(key = "Elevator/displacment")
-  private MutDistance displacment = Meters.mutable(0.0);
-
-  /* groundExtension: the current distance from the ground to the middle of the elevator carraige */
-  @AutoLogOutput(key = "Elevator/groundExtension")
-  private MutDistance groundExtension = Meters.mutable(0.0);
+  private MutDistance positionReference = Meters.mutable(0.0);
 
   /* whether or not we have been homed */
   @AutoLogOutput(key = "Elevator/isHomed")
@@ -129,13 +126,15 @@ public class Elevator extends SubsystemBase implements AutoClosing {
                 this));
 
     /* Configure LQR */
-    controller.latencyCompensate(plant, ElevatorConstants.nominalLoopTime.in(Seconds), 0.025);
+    if (Robot.isReal()) {
+      controller.latencyCompensate(plant, ElevatorConstants.nominalLoopTime.in(Seconds), 0.025);
+    }
 
     /* Initalize Values */
     this.elevatorExtension.mut_replace(Meters.of(0.0));
     this.elevatorVelocity.mut_replace(MetersPerSecond.of(0.0));
-    this.displacment.mut_replace(Meters.of(0.0));
-    this.groundExtension.mut_replace(Meters.of(0.0));
+    this.positionReference.mut_replace(Meters.of(0.0));
+    loop.setNextR(VecBuilder.fill(0, 0.0));
   }
 
   @Override
@@ -165,10 +164,9 @@ public class Elevator extends SubsystemBase implements AutoClosing {
       return;
     }
 
-    // Run Control Loops
-
+    // Run Control Loopsaa
     /* Set Reference */
-    loop.setNextR(VecBuilder.fill(0, 0));
+    loop.setNextR(VecBuilder.fill(positionReference.in(Meters), 0.0));
 
     /* Correct kalaman state vector */
     loop.correct(
@@ -229,11 +227,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   /**
    * Drives the elevator to a specified
    *
-   * @param hieght Desired distance from ground to middle of elevator carraige
+   * @param hieght Desired distance to a desired extension
    */
   public void setPosition(Distance hieght) {
-    System.out.println(
-        "Method: driveGroundExtension - Not Implemented Yet! " + this.getSubsystem());
+    positionReference.mut_replace(hieght);
   }
 
   /**

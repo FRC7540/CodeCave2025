@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -37,9 +38,12 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+    elevatorSim.update(Milliseconds.of(20).in(Seconds));
     inputs.lowerLimitSwitch = elevatorSim.hasHitLowerLimit();
     inputs.upperLimitSwitch = elevatorSim.hasHitUpperLimit();
-
+    if (elevatorSim.hasHitLowerLimit()) {
+      elevatorSim.setState(VecBuilder.fill(0.0, 0.0));
+    }
     inputs.motorAPositionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
             .timesConversionFactor(ElevatorConstants.extensionConversionFactor.reciprocal()));

@@ -38,6 +38,7 @@ public class HomeElevator extends Command {
       return;
     }
     elevator.setHomed(true);
+    unableToHomeAlert.set(false);
     elevator.resetControlLoops();
     elevator.setControlsActive(true);
   }
