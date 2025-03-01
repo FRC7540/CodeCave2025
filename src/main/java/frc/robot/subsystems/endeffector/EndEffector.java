@@ -16,6 +16,7 @@ package frc.robot.subsystems.endeffector;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
@@ -110,8 +111,33 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     /* Determine What to feed the control loops */
 
     /* Feed the loops */
+    if (!controlSystemActive) {
+      this.resetControlLoops();
+      return;
+    }
+
+    /* Set the next Reference */
+    loop.setNextR(VecBuilder.fill(0, 0));
+
+    /* Correct the system state model */
+    loop.correct(
+        VecBuilder.fill(
+            endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
+            endeffectorinputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond)));
+
+    loop.predict(EndEffectorConstants.nominalLoopTime.in(Seconds));
+
+    Voltage controlVoltage = Volts.of(loop.getU(0));
 
     /* Apply the values */
+    endeffectorio.setMotorVoltage(controlVoltage);
+  }
+
+  public void resetControlLoops() {
+    loop.reset(
+        VecBuilder.fill(
+            endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
+            endeffectorinputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond)));
   }
 
   public void setTargetPosition(Angle targetAngle) {}
