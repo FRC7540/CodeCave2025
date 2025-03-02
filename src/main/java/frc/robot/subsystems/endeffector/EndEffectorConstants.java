@@ -7,6 +7,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -31,8 +32,10 @@ public class EndEffectorConstants {
   public static final double positonalDriveGearing = 1.0;
 
   public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.5);
-  /* Control System Definitions */
+  public static final Angle minAngle = Radians.of(0.0);
+  public static final Angle maxAngle = Radians.of(1.0);
 
+  /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);
   public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3.0, 3.0);
   public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.1, 0.1);

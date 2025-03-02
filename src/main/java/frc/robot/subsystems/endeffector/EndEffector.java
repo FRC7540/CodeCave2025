@@ -15,6 +15,7 @@ package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -26,6 +27,7 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +46,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "EndEffector/controlSystemActive")
   private boolean controlSystemActive;
+
+  /* Current Target Angle of the end effector */
+  @AutoLogOutput(key = "EndEffector/targetAngle")
+  private MutAngle targetAngle = Radians.mutable(0.0);
 
   /* This holds a model of our gearbox */
   private final DCMotor positonalMotorSystem =
@@ -140,7 +146,19 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
             endeffectorinputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond)));
   }
 
-  public void setTargetPosition(Angle targetAngle) {}
+  /**
+   * Set the target angle of the end effector
+   *
+   * @param targetAngle Target Angle of the end effector
+   */
+  public void setTargetPosition(Angle targetAngle) {
+    this.targetAngle.mut_replace(
+        MathUtil.clamp(
+            targetAngle.in(Radians),
+            EndEffectorConstants.minAngle.in(Radians),
+            EndEffectorConstants.maxAngle.in(Radians)),
+        Radians);
+  }
 
   /**
    * Enables or disabled active control of the elevator by the elevator subsystem
