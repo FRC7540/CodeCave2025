@@ -144,4 +144,9 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     }
     positionMotor.setVoltage(voltage);
   }
+
+  @Override
+  public void setEffectionMotorVoltage(Voltage voltage) {
+    effectionMotor.setVoltage(voltage);
+  }
 }
