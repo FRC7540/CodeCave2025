@@ -138,7 +138,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     Voltage controlVoltage = Volts.of(loop.getU(0));
 
     /* Apply the values */
-    endeffectorio.setMotorVoltage(controlVoltage);
+    endeffectorio.setPositionMotorVoltage(controlVoltage);
   }
 
   public void resetControlLoops() {
@@ -194,7 +194,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
           "You must deactivate the end effector control systems before driving by voltage!", false);
       return;
     }
-    endeffectorio.setMotorVoltage(voltage);
+    endeffectorio.setPositionMotorVoltage(voltage);
   }
 
   /**
@@ -204,7 +204,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    */
   public void runVolts(Voltage voltage) {
     this.setControlsActive(false);
-    endeffectorio.setMotorVoltage(voltage);
+    endeffectorio.setPositionMotorVoltage(voltage);
   }
 
   /**
@@ -222,5 +222,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    */
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  public void driveEffectionMotor(Voltage controlVoltage) {
+    endeffectorio.setEffectionMotorVoltage(controlVoltage);
   }
 }

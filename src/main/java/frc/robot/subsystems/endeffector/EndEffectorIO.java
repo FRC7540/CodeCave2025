@@ -9,16 +9,19 @@ import org.littletonrobotics.junction.AutoLog;
 public interface EndEffectorIO extends AutoClosing {
   @AutoLog
   public static class EndEffectorInputs {
-    // Endstops
-    public boolean lowerLimitSwitch = false;
-    public boolean upperLimitSwitch = false;
-
     // Motor Values
-    public boolean motorIsConnected = false;
-    public MutAngle motorPositionRad = Radians.mutable(0.0);
-    public MutAngularVelocity motorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
-    public MutVoltage motorAppliedVolts = Volts.mutable(0.0);
-    public MutCurrent motorCurrentAmps = Amps.mutable(0.0);
+    public boolean positionMotorIsConnected = false;
+    public MutAngle positionMotorPositionRad = Radians.mutable(0.0);
+    public MutAngularVelocity positionMotorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
+    public MutVoltage positionMotorAppliedVolts = Volts.mutable(0.0);
+    public MutCurrent positionMotorCurrentAmps = Amps.mutable(0.0);
+
+    // Effection Motor Values
+    public boolean effectionMotorIsConnected = false;
+    public MutAngle effectionMotorPositionRad = Radians.mutable(0.0);
+    public MutAngularVelocity effectionMotorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
+    public MutVoltage effectionMotorAppliedVolts = Volts.mutable(0.0);
+    public MutCurrent effectionMotorCurrentAmps = Amps.mutable(0.0);
 
     public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);
     public MutAngularVelocity enfEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
@@ -27,5 +30,7 @@ public interface EndEffectorIO extends AutoClosing {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(EndEffectorInputs inputs) {}
 
-  public default void setMotorVoltage(Voltage voltage) {}
+  public default void setPositionMotorVoltage(Voltage voltage) {}
+
+  public default void setEffectionMotorVoltage(Voltage voltage) {}
 }

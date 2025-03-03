@@ -21,75 +21,90 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import java.util.function.DoubleSupplier;
 
 public class EndEffectorIOSpark implements EndEffectorIO {
   /* Hardware Objects */
-  private final SparkBase motor;
-  private final RelativeEncoder motorEncoder;
-  private final AbsoluteEncoder endEffectorEncoder;
-  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
+  private final SparkBase positionMotor;
+  private final RelativeEncoder positinMotorEncoder;
+  private final AbsoluteEncoder positioinMotorEndEffectorEncoder;
+  private final Debouncer positionMotorConnectedDebouncer = new Debouncer(0.5);
+
+  private final SparkBase effectionMotor;
+  private final Debouncer effectionMotorConnectedDebouncer = new Debouncer(0.5);
 
   public EndEffectorIOSpark() {
-    motor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
-    motorEncoder = motor.getEncoder();
-    endEffectorEncoder = motor.getAbsoluteEncoder();
+    positionMotor = new SparkMax(EndEffectorConstants.positonalMotorCANID, MotorType.kBrushless);
+    positinMotorEncoder = positionMotor.getEncoder();
+    positioinMotorEndEffectorEncoder = positionMotor.getAbsoluteEncoder();
 
-    var motorConfig = new SparkMaxConfig();
-    motorConfig
+    var positionMotorConfig = new SparkMaxConfig();
+    positionMotorConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
-        .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
+        .smartCurrentLimit((int) EndEffectorConstants.positonalMotorMaxCurrent.in(Amp))
+        .voltageCompensation(EndEffectorConstants.positonalMotorNominalVoltage.in(Volt));
 
-    motorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
+    positionMotorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
-        motor,
+        positionMotor,
         0,
         () ->
-            motor.configure(
-                motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            positionMotor.configure(
+                positionMotorConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
+
+    effectionMotor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
+    var effectionMotorConfig = new SparkMaxConfig();
+    effectionMotorConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit((int) EndEffectorConstants.effectionMotorMaxCurrent.in(Amp))
+        .voltageCompensation(EndEffectorConstants.effectionMotorNominalVoltage.in(Volt));
   }
 
   @Override
   public void updateInputs(EndEffectorInputs inputs) {
     sparkStickyFault = false;
     ifOk(
-        motor,
-        motorEncoder::getPosition,
-        (value) -> inputs.motorPositionRad.mut_replace(value, Rotations));
+        positionMotor,
+        positinMotorEncoder::getPosition,
+        (value) -> inputs.positionMotorPositionRad.mut_replace(value, Rotations));
     ifOk(
-        motor,
-        motorEncoder::getVelocity,
-        (value) -> inputs.motorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+        positionMotor,
+        positinMotorEncoder::getVelocity,
+        (value) -> inputs.positionMotorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
-        motor,
-        new DoubleSupplier[] {motor::getAppliedOutput, motor::getBusVoltage},
-        (values) -> inputs.motorAppliedVolts.mut_replace(values[0] * values[1], Volt));
+        positionMotor,
+        new DoubleSupplier[] {positionMotor::getAppliedOutput, positionMotor::getBusVoltage},
+        (values) -> inputs.positionMotorAppliedVolts.mut_replace(values[0] * values[1], Volt));
     ifOk(
-        motor, motor::getOutputCurrent, (value) -> inputs.motorCurrentAmps.mut_replace(value, Amp));
-    inputs.motorIsConnected = motorConnectedDebouncer.calculate(!sparkStickyFault);
+        positionMotor,
+        positionMotor::getOutputCurrent,
+        (value) -> inputs.positionMotorCurrentAmps.mut_replace(value, Amp));
+    inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
     ifOk(
-        motor,
-        endEffectorEncoder::getPosition,
+        positionMotor,
+        positioinMotorEndEffectorEncoder::getPosition,
         (value) -> inputs.endEffectorAbsolutePositionRad.mut_replace(value, Rotations));
     ifOk(
-        motor,
-        endEffectorEncoder::getVelocity,
+        positionMotor,
+        positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
             inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
   }
 
   @Override
-  public void setMotorVoltage(Voltage voltage) {
+  public void setPositionMotorVoltage(Voltage voltage) {
     /* Software motion constraints */
-    if (endEffectorEncoder.getPosition() <= EndEffectorConstants.minAngle.in(Rotations)) {
+    if (positioinMotorEndEffectorEncoder.getPosition()
+        <= EndEffectorConstants.minAngle.in(Rotations)) {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
     }
-    if (endEffectorEncoder.getPosition() >= EndEffectorConstants.minAngle.in(Rotations)) {
+    if (positioinMotorEndEffectorEncoder.getPosition()
+        >= EndEffectorConstants.minAngle.in(Rotations)) {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
     }
-    motor.setVoltage(voltage);
+    positionMotor.setVoltage(voltage);
   }
 }
