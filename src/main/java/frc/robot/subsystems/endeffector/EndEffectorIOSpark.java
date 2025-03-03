@@ -31,6 +31,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final Debouncer positionMotorConnectedDebouncer = new Debouncer(0.5);
 
   private final SparkBase effectionMotor;
+  private final RelativeEncoder effectionMotorEncoder;
   private final Debouncer effectionMotorConnectedDebouncer = new Debouncer(0.5);
 
   public EndEffectorIOSpark() {
@@ -39,16 +40,21 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     positioinMotorEndEffectorEncoder = positionMotor.getAbsoluteEncoder();
 
     var positionMotorConfig = new SparkMaxConfig();
+    positionMotorConfig.encoder.velocityConversionFactor(
+        EndEffectorConstants.positonalDriveMotorEndcoderVelocityFactor);
+    positionMotorConfig.encoder.positionConversionFactor(
+        EndEffectorConstants.positonalDriveMotorEndcoderPositionFactor);
     positionMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) EndEffectorConstants.positonalMotorMaxCurrent.in(Amp))
         .voltageCompensation(EndEffectorConstants.positonalMotorNominalVoltage.in(Volt));
 
-    positionMotorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
+    System.out.println("AAA:: " + EndEffectorConstants.positonalDriveMotorEndcoderVelocityFactor);
+    // positionMotorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
         positionMotor,
-        0,
+        5,
         () ->
             positionMotor.configure(
                 positionMotorConfig,
@@ -56,11 +62,22 @@ public class EndEffectorIOSpark implements EndEffectorIO {
                 PersistMode.kPersistParameters));
 
     effectionMotor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
+    effectionMotorEncoder = effectionMotor.getEncoder();
+
     var effectionMotorConfig = new SparkMaxConfig();
     effectionMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) EndEffectorConstants.effectionMotorMaxCurrent.in(Amp))
         .voltageCompensation(EndEffectorConstants.effectionMotorNominalVoltage.in(Volt));
+
+    tryUntilOk(
+        effectionMotor,
+        5,
+        () ->
+            effectionMotor.configure(
+                effectionMotorConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
   }
 
   @Override
@@ -92,6 +109,26 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
             inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+
+    sparkStickyFault = false;
+    ifOk(
+        effectionMotor,
+        effectionMotorEncoder::getPosition,
+        (value) -> inputs.effectionMotorPositionRad.mut_replace(value, Rotations));
+    ifOk(
+        effectionMotor,
+        effectionMotorEncoder::getVelocity,
+        (value) -> inputs.effectionMotorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+    ifOk(
+        effectionMotor,
+        new DoubleSupplier[] {effectionMotor::getAppliedOutput, effectionMotor::getBusVoltage},
+        (values) -> inputs.effectionMotorAppliedVolts.mut_replace(values[0] * values[1], Volt));
+    ifOk(
+        effectionMotor,
+        effectionMotor::getOutputCurrent,
+        (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
+    inputs.effectionMotorIsConnected =
+        effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
   }
 
   @Override

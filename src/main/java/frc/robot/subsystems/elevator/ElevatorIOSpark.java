@@ -62,7 +62,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
     tryUntilOk(
         motorA,
-        0,
+        5,
         () ->
             motorA.configure(
                 motorAConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
@@ -80,7 +80,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
     tryUntilOk(
         motorB,
-        0,
+        5,
         () ->
             motorB.configure(
                 motorBConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));

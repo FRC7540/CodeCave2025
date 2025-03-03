@@ -29,7 +29,9 @@ public class EndEffectorConstants {
   /* Motion Definitions */
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
-  public static final double positonalDriveGearing = 1.0;
+  public static final double positonalDriveGearing = (26.0 / 14.0) * 4.0;
+  public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
+  public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;
 
   public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.5);
   public static final Angle minAngle = Radians.of(0.0);
