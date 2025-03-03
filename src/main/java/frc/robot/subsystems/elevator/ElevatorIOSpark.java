@@ -19,6 +19,7 @@ import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -49,7 +50,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final Debouncer lowerLimitDebouncer;
 
   public ElevatorIOSpark() {
-    motorA = new SparkMax(ElevatorConstants.motorACANID, MotorType.kBrushless);
+    motorA = new SparkFlex(ElevatorConstants.motorACANID, MotorType.kBrushless);
     motorAEncoder = motorA.getEncoder();
 
     var motorAConfig = new SparkMaxConfig();
