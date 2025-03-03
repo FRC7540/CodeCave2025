@@ -44,6 +44,9 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         EndEffectorConstants.positonalDriveMotorEndcoderVelocityFactor);
     positionMotorConfig.encoder.positionConversionFactor(
         EndEffectorConstants.positonalDriveMotorEndcoderPositionFactor);
+    positionMotorConfig.absoluteEncoder.inverted(true);
+    positionMotorConfig.absoluteEncoder.zeroOffset(
+        EndEffectorConstants.positonEncoderOffset.in(Rotations));
     positionMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) EndEffectorConstants.positonalMotorMaxCurrent.in(Amp))
@@ -78,6 +81,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
                 effectionMotorConfig,
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
+    positinMotorEncoder.setPosition(positioinMotorEndEffectorEncoder.getPosition());
   }
 
   @Override
@@ -134,12 +138,12 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   @Override
   public void setPositionMotorVoltage(Voltage voltage) {
     /* Software motion constraints */
-    if (positioinMotorEndEffectorEncoder.getPosition()
-        <= EndEffectorConstants.minAngle.in(Rotations)) {
+    if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
+        .lte(EndEffectorConstants.minAngle)) {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
     }
-    if (positioinMotorEndEffectorEncoder.getPosition()
-        >= EndEffectorConstants.minAngle.in(Rotations)) {
+    if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
+        .gte(EndEffectorConstants.maxAngle)) {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
     }
     positionMotor.setVoltage(voltage);
