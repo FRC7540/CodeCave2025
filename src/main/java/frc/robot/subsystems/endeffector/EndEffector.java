@@ -131,8 +131,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
             endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
             endeffectorinputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond)));
 
+    /* Run the predictions on the internal model */
     loop.predict(EndEffectorConstants.nominalLoopTime.in(Seconds));
 
+    /* Acquire the optimal plant input */
     Voltage controlVoltage = Volts.of(loop.getU(0));
 
     /* Apply the values */
