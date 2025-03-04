@@ -28,7 +28,7 @@ public class EndEffectorConstants {
   /* Motion Definitions */
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
-  public static final double positonalDriveGearing = (26.0 / 14.0) * 5.0;
+  public static final double positonalDriveGearing = (26.0 / 14.0) * 12.0;
   public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
   public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;
   public static final Angle positonEncoderOffset = Radians.of(2.75);
@@ -42,8 +42,8 @@ public class EndEffectorConstants {
   public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3.0, 3.0);
   public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.5, 0.5);
 
-  public static final Angle maximumPositionExcusrsion = Radians.of(0.1);
-  public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.1);
+  public static final Angle maximumPositionExcusrsion = Radians.of(0.01);
+  public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.01);
 
   public static final Voltage controlAuthority = Volts.of(12.0);
 

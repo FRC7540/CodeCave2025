@@ -3,7 +3,6 @@ package frc.robot.subsystems.endeffector;
 import static edu.wpi.first.units.Units.Amp;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volt;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.util.ExtraUnits.RotationsPerMinute;
 import static frc.robot.util.SparkUtil.ifOk;
 import static frc.robot.util.SparkUtil.sparkStickyFault;
@@ -18,7 +17,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.function.DoubleSupplier;
@@ -137,14 +135,14 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   @Override
   public void setPositionMotorVoltage(Voltage voltage) {
     /* Software motion constraints */
-    if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
-        .lte(EndEffectorConstants.minAngle)) {
-      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
-    }
-    if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
-        .gte(EndEffectorConstants.maxAngle)) {
-      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
-    }
+    // if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
+    //     .lte(EndEffectorConstants.minAngle)) {
+    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
+    // }
+    // if (Rotations.of(positioinMotorEndEffectorEncoder.getPosition())
+    //     .gte(EndEffectorConstants.maxAngle)) {
+    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
+    // }
     positionMotor.setVoltage(voltage);
   }
 

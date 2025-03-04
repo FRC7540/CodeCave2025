@@ -53,7 +53,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
   /* This holds a model of our gearbox */
   private final DCMotor positonalMotorSystem =
-      DCMotor.getNEO(2).withReduction(EndEffectorConstants.positonalDriveGearing);
+      DCMotor.getNEO(1).withReduction(EndEffectorConstants.positonalDriveGearing / 3);
   /* This plant holds a model of our elevator, the system has the following properties:
    *
    * Eventually, we can replace this with a linear system id based on sysid data form the elevator itself.
@@ -66,7 +66,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
       LinearSystemId.createSingleJointedArmSystem(
           positonalMotorSystem,
           EndEffectorConstants.mechanismMOI.in(KilogramSquareMeters),
-          EndEffectorConstants.positonalDriveGearing);
+          EndEffectorConstants.positonalDriveGearing / 3);
 
   private final KalmanFilter<N2, N1, N2> observer =
       new KalmanFilter<>(
@@ -94,9 +94,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                Volts.of(2.0).per(Second),
-                Volts.of(5.0),
-                Seconds.of(5.0), // Use default config
+                Volts.of(0.1).per(Second),
+                Volts.of(1.0),
+                Seconds.of(20.0), // Use default config
                 (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> this.runVolts(voltage),
