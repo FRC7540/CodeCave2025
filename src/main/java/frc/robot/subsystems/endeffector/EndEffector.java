@@ -94,9 +94,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null,
-                null,
-                null, // Use default config
+                Volts.of(2.0).per(Second),
+                Volts.of(5.0),
+                Seconds.of(5.0), // Use default config
                 (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> this.runVolts(voltage),
@@ -123,13 +123,13 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     }
 
     /* Set the next Reference */
-    loop.setNextR(VecBuilder.fill(0, 0));
+    loop.setNextR(VecBuilder.fill(targetAngle.in(Radians), 0));
 
     /* Correct the system state model */
     loop.correct(
         VecBuilder.fill(
             endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
-            endeffectorinputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond)));
+            endeffectorinputs.positionMotorVelocityRadPerSec.in(RadiansPerSecond)));
 
     /* Run the predictions on the internal model */
     loop.predict(EndEffectorConstants.nominalLoopTime.in(Seconds));

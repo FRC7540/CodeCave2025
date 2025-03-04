@@ -52,7 +52,6 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         .smartCurrentLimit((int) EndEffectorConstants.positonalMotorMaxCurrent.in(Amp))
         .voltageCompensation(EndEffectorConstants.positonalMotorNominalVoltage.in(Volt));
 
-    System.out.println("AAA:: " + EndEffectorConstants.positonalDriveMotorEndcoderVelocityFactor);
     // positionMotorConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
     tryUntilOk(
