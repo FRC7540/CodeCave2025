@@ -39,9 +39,9 @@ public class ElevatorConstants {
   public static final int motorBCANDID = 11;
   public static final int lowerLimitDIOID = 0;
   public static final int upperLimitDIOID = 1;
-  public static final Current elevatorMotorMaxCurrent = Amps.of(40);
+  public static final Current elevatorMotorMaxCurrent = Amps.of(80);
   public static final Voltage elevatorMotorNominalVoltage = Volts.of(12.0);
-  public static final boolean invertMotorB = true;
+  public static final boolean invertMotorB = false;
 
   public static final Distance minHieght = Meters.of(0);
   public static final Distance maxHieght = Meters.of(5);

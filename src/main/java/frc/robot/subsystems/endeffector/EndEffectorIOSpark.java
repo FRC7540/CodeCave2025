@@ -1,7 +1,10 @@
 package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volt;
 import static frc.robot.util.ExtraUnits.RotationsPerMinute;
 import static frc.robot.util.SparkUtil.ifOk;
@@ -18,6 +21,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.function.DoubleSupplier;
 
@@ -31,6 +35,9 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final SparkBase effectionMotor;
   private final RelativeEncoder effectionMotorEncoder;
   private final Debouncer effectionMotorConnectedDebouncer = new Debouncer(0.5);
+
+  private final LinearFilter filt =
+      LinearFilter.singlePoleIIR(Milliseconds.of(15).in(Seconds), 0.02);
 
   public EndEffectorIOSpark() {
     positionMotor = new SparkMax(EndEffectorConstants.positonalMotorCANID, MotorType.kBrushless);
@@ -130,6 +137,9 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
+    inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
+        RadiansPerSecond.of(
+            filt.calculate(inputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond))));
   }
 
   @Override

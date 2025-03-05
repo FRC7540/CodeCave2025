@@ -161,11 +161,12 @@ public class RobotContainer {
                 endEffector)
             .withTimeout(Seconds.of(0.5)));
 
+    SmartDashboard.putNumber("pos", 4.1);
     SmartDashboard.putData(
         "DriveEndEffector",
         new StartEndCommand(
             () -> {
-              endEffector.setTargetPosition(Radians.of(3.1));
+              endEffector.setTargetPosition(Radians.of(SmartDashboard.getNumber("pos", 4.1)));
               endEffector.setControlsActive(true);
             },
             () -> {

@@ -22,7 +22,7 @@ public class EndEffectorConstants {
   public static final Voltage effectionMotorNominalVoltage = Volts.of(12.0);
 
   public static final int positonalMotorCANID = 13;
-  public static final Current positonalMotorMaxCurrent = Amps.of(40);
+  public static final Current positonalMotorMaxCurrent = Amps.of(50);
   public static final Voltage positonalMotorNominalVoltage = Volts.of(12.0);
 
   /* Motion Definitions */
@@ -31,10 +31,11 @@ public class EndEffectorConstants {
   public static final double positonalDriveGearing = (26.0 / 14.0) * 12.0;
   public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
   public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;
-  public static final Angle positonEncoderOffset = Radians.of(2.75);
+  public static final Angle positonEncoderOffset =
+      Radians.of((2.75 - 2.50) + Math.PI); // Math.PI * 1 - 2.6794
 
-  public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.071);
-  public static final Angle minAngle = Radians.of(2.1);
+  public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.075);
+  public static final Angle minAngle = Radians.of(2.2);
   public static final Angle maxAngle = Radians.of(4.4);
 
   /* Control System Definitions */
@@ -43,7 +44,7 @@ public class EndEffectorConstants {
   public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.5, 0.5);
 
   public static final Angle maximumPositionExcusrsion = Radians.of(0.01);
-  public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.01);
+  public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.001);
 
   public static final Voltage controlAuthority = Volts.of(12.0);
 
