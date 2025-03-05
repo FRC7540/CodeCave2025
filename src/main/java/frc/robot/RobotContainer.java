@@ -16,6 +16,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,10 +26,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.HomeElevator;
 import frc.robot.subsystems.drive.Drive;
@@ -67,7 +73,7 @@ public class RobotContainer {
   private final CommandXboxController driverController =
       new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
   private final CommandXboxController operatorController =
-      new CommandXboxController(Constants.HID.OPERATOR_CONTROLLER_ID);
+      new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -143,6 +149,36 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    SmartDashboard.putData(
+        "MoveEndEffector",
+        new StartEndCommand(
+                () -> {
+                  endEffector.driveVoltage(Volts.of(1.0));
+                },
+                () -> {
+                  endEffector.driveVoltage(Volts.of(0.0));
+                },
+                endEffector)
+            .withTimeout(Seconds.of(0.5)));
+
+    SmartDashboard.putData(
+        "DriveEndEffector",
+        new StartEndCommand(
+            () -> {
+              endEffector.setTargetPosition(Radians.of(3.1));
+              endEffector.setControlsActive(true);
+            },
+            () -> {
+              endEffector.setControlsActive(false);
+              endEffector.driveVoltage(Volts.of(0.0));
+            },
+            endEffector));
+
+    SmartDashboard.putData("Forward quas", endEffector.sysIDQuasistatic(Direction.kForward));
+    SmartDashboard.putData("Reverse quas", endEffector.sysIDQuasistatic(Direction.kReverse));
+
+    SmartDashboard.putData("Forward dyn", endEffector.sysIDDynamic(Direction.kForward));
+    SmartDashboard.putData("Reverse dyn", endEffector.sysIDDynamic(Direction.kReverse));
   }
 
   /**
