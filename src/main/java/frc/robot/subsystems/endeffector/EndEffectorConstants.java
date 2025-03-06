@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.units.measure.Angle;
@@ -46,12 +45,8 @@ public class EndEffectorConstants {
   public static final Angle maximumPositionExcusrsion = Radians.of(0.01);
   public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.001);
 
-  public static final Voltage controlAuthority = Volts.of(12.0);
+  public static final Voltage minControlAuthority = Volts.of(8.0);
+  public static final Voltage maxControlAuthority = Volts.of(-4.0);
 
   /* Derived Constants */
-  public static final Vector<N1> controlAuthorityMatrix =
-      VecBuilder.fill(controlAuthority.in(Volts));
-  public static final Vector<N2> stateExcursionToleranceMatrix =
-      VecBuilder.fill(
-          maximumPositionExcusrsion.in(Radians), maximumVecloityExcursion.in(RadiansPerSecond));
 }

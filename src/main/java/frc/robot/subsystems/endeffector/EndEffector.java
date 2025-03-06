@@ -41,7 +41,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "EndEffector/controlSystemActive")
-  private boolean controlSystemActive;
+  private boolean controlSystemActive = true;
 
   /* Current Target Angle of the end effector */
   @AutoLogOutput(key = "EndEffector/targetAngle")
@@ -50,8 +50,6 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   public EndEffector(EndEffectorIO endeffectorio) {
     this.endeffectorio = endeffectorio;
 
-    feedback.setTolerance(0.01);
-    feedback.setIntegratorRange(-8.0, 3.0);
     SmartDashboard.putData(feedback);
     sysIdRoutine =
         new SysIdRoutine(
@@ -64,6 +62,12 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 (voltage) -> this.runVolts(voltage),
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
+
+    feedback.setTolerance(0.01);
+    feedback.setIntegratorRange(
+        EndEffectorConstants.minControlAuthority.in(Volts),
+        EndEffectorConstants.maxControlAuthority.in(Volts));
+    targetAngle.mut_replace(EndEffectorConstants.maxAngle);
   }
 
   @Override
@@ -77,7 +81,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     output +=
         feedback.calculate(
             targetAngle.in(Radians), endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians));
-    MathUtil.clamp(output, -8.0, 8.0);
+    MathUtil.clamp(
+        output,
+        EndEffectorConstants.minControlAuthority.in(Volts),
+        EndEffectorConstants.maxControlAuthority.in(Volts));
     endeffectorio.setPositionMotorVoltage(Volts.of(-output));
   }
 
@@ -138,6 +145,24 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   public void runVolts(Voltage voltage) {
     this.setControlsActive(false);
     endeffectorio.setPositionMotorVoltage(voltage);
+  }
+
+  /**
+   * Runs the end effector effection motors at a desired voltage
+   *
+   * @param voltage The voltage to run the motor at
+   */
+  public void runEffectionVolts(Voltage voltage) {
+    endeffectorio.setEffectionMotorVoltage(voltage);
+  }
+
+  /**
+   * Get the current angle of the endEffector
+   *
+   * @return The Current Angle of the endEffector
+   */
+  public Angle getAngle() {
+    return endeffectorinputs.endEffectorAbsolutePositionRad;
   }
 
   /**

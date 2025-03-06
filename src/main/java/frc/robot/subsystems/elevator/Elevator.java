@@ -245,6 +245,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     return this.elevatorInputs.motorAPositionRad.lte(ElevatorConstants.minExtenesionRadians);
   }
 
+  public Distance getExtension() {
+    return elevatorExtension;
+  }
+
   /**
    * @param direction SysIdDirection for routine
    * @return Command that runs the sysid routine requested

@@ -16,25 +16,23 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.HomeElevator;
+import frc.robot.commands.elevator.elevatorJoystickControl;
+import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -73,10 +71,14 @@ public class RobotContainer {
   private final CommandXboxController driverController =
       new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
   private final CommandXboxController operatorController =
-      new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
+      new CommandXboxController(Constants.HID.OPERATOR_CONTROLLER_ID);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  public static final Alert unableToHomeAlert =
+      new Alert(
+          "Elevator homing procedure failed, Homing command was preempted", AlertType.kWarning);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -149,37 +151,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    SmartDashboard.putData(
-        "MoveEndEffector",
-        new StartEndCommand(
-                () -> {
-                  endEffector.driveVoltage(Volts.of(1.0));
-                },
-                () -> {
-                  endEffector.driveVoltage(Volts.of(0.0));
-                },
-                endEffector)
-            .withTimeout(Seconds.of(0.5)));
-
-    SmartDashboard.putNumber("pos", 4.1);
-    SmartDashboard.putData(
-        "DriveEndEffector",
-        new StartEndCommand(
-            () -> {
-              endEffector.setTargetPosition(Radians.of(SmartDashboard.getNumber("pos", 4.1)));
-              endEffector.setControlsActive(true);
-            },
-            () -> {
-              endEffector.setControlsActive(false);
-              endEffector.driveVoltage(Volts.of(0.0));
-            },
-            endEffector));
-
-    SmartDashboard.putData("Forward quas", endEffector.sysIDQuasistatic(Direction.kForward));
-    SmartDashboard.putData("Reverse quas", endEffector.sysIDQuasistatic(Direction.kReverse));
-
-    SmartDashboard.putData("Forward dyn", endEffector.sysIDDynamic(Direction.kForward));
-    SmartDashboard.putData("Reverse dyn", endEffector.sysIDDynamic(Direction.kReverse));
   }
 
   /**
@@ -221,46 +192,57 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    // Default Command, drive the manipulator using a joystick
+    endEffector.setDefaultCommand(
+        new JoystickControl(
+            endEffector,
+            operatorController::getRightY,
+            () -> operatorController.getRightTriggerAxis() >= 0.25,
+            () -> operatorController.getLeftTriggerAxis() >= 0.25));
+
     operatorController.a().debounce(0.25).whileTrue(new HomeElevator(elevator));
 
+    elevator.setDefaultCommand(new elevatorJoystickControl(elevator, operatorController::getLeftY));
+
     // Example Coral Placement Code
-    // TODO: delete these code for your own project
     if (Constants.currentMode == Constants.Mode.SIM) {
-      // L4 placement
-      driverController
-          .y()
-          .onTrue(
-              Commands.runOnce(
-                  () ->
-                      SimulatedArena.getInstance()
-                          .addGamePieceProjectile(
-                              new ReefscapeCoralOnFly(
-                                  driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-                                  new Translation2d(0.4, 0),
-                                  driveSimulation
-                                      .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                                  driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-                                  Meters.of(2),
-                                  MetersPerSecond.of(1.5),
-                                  Degrees.of(-80)))));
-      // L3 placement
-      driverController
-          .b()
-          .onTrue(
-              Commands.runOnce(
-                  () ->
-                      SimulatedArena.getInstance()
-                          .addGamePieceProjectile(
-                              new ReefscapeCoralOnFly(
-                                  driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-                                  new Translation2d(0.4, 0),
-                                  driveSimulation
-                                      .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                                  driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-                                  Meters.of(1.35),
-                                  MetersPerSecond.of(1.5),
-                                  Degrees.of(-60)))));
+      configureSimulationButtonBindings();
     }
+  }
+
+  public void configureSimulationButtonBindings() {
+    // L4 placement
+    driverController
+        .y()
+        .onTrue(
+            Commands.runOnce(
+                () ->
+                    SimulatedArena.getInstance()
+                        .addGamePieceProjectile(
+                            new ReefscapeCoralOnFly(
+                                driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+                                new Translation2d(0.4, 0),
+                                driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+                                Meters.of(2),
+                                MetersPerSecond.of(1.5),
+                                Degrees.of(-80)))));
+    // L3 placement
+    driverController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                () ->
+                    SimulatedArena.getInstance()
+                        .addGamePieceProjectile(
+                            new ReefscapeCoralOnFly(
+                                driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+                                new Translation2d(0.4, 0),
+                                driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+                                Meters.of(1.35),
+                                MetersPerSecond.of(1.5),
+                                Degrees.of(-60)))));
   }
 
   /**

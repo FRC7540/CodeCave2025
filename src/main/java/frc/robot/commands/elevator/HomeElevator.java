@@ -2,16 +2,12 @@ package frc.robot.commands.elevator;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.elevator.Elevator;
 
 public class HomeElevator extends Command {
   private final Elevator elevator;
-  private final Alert unableToHomeAlert =
-      new Alert(
-          "Elevator homing procedure failed, Homing command was preempted", AlertType.kWarning);
 
   public HomeElevator(Elevator newElevator) {
     elevator = newElevator;
@@ -22,6 +18,7 @@ public class HomeElevator extends Command {
   public void initialize() {
     elevator.setControlsActive(false);
     elevator.setVelocity(MetersPerSecond.of(0.1));
+    RobotContainer.unableToHomeAlert.set(false);
   }
 
   @Override
@@ -33,12 +30,12 @@ public class HomeElevator extends Command {
     if (!interrupted) {
       elevator.setZero();
     } else {
-      unableToHomeAlert.set(true);
+      RobotContainer.unableToHomeAlert.set(true);
       elevator.setHomed(false);
       return;
     }
     elevator.setHomed(true);
-    unableToHomeAlert.set(false);
+    RobotContainer.unableToHomeAlert.set(false);
     elevator.setControlsActive(true);
   }
 
