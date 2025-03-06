@@ -15,18 +15,9 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.KalmanFilter;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
@@ -39,7 +30,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -61,7 +51,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   private MutLinearVelocity elevatorVelocity = MetersPerSecond.mutable(0.0);
 
   /* displacment: Desired Elevator Extension */
-  @AutoLogOutput(key = "Elevator/displacment")
+  @AutoLogOutput(key = "Elevator/reference")
   private MutDistance positionReference = Meters.mutable(0.0);
 
   /* whether or not we have been homed */
@@ -70,55 +60,24 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   /* Control Systems */
 
+  private final ElevatorFeedforward feedforward =
+      new ElevatorFeedforward(
+          ElevatorConstants.ControlLoopConstants.S,
+          ElevatorConstants.ControlLoopConstants.G,
+          ElevatorConstants.ControlLoopConstants.V,
+          ElevatorConstants.ControlLoopConstants.A);
+  private final ProfiledPIDController feedback =
+      new ProfiledPIDController(
+          ElevatorConstants.ControlLoopConstants.P,
+          ElevatorConstants.ControlLoopConstants.I,
+          ElevatorConstants.ControlLoopConstants.D,
+          new TrapezoidProfile.Constraints(
+              ElevatorConstants.MAX_VELOCITY.in(MetersPerSecond),
+              ElevatorConstants.MAX_ACCELERATION.in(MetersPerSecondPerSecond)));
+
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "Elevator/controlSystemActive")
   private boolean controlSystemActive = false;
-
-  /* This holds a model of our gearbox */
-  private final DCMotor elevatorMotorSystem =
-      DCMotor.getNEO(2).withReduction(ElevatorConstants.gerboxReduction);
-
-  /* This plant holds a model of our elevator, the system has the following properties:
-   *
-   * Eventually, we can replace this with a linear system id based on sysid data form the elevator itself.
-   *
-   * States: [Position, Velocity] (Of the elevator)
-   * Inputs: [Voltage] (Input to the plant)
-   * Outputs: [Position] (Current Position of the plant)
-   */
-  /* private final LinearSystem<N2, N1, N2> plant =
-  LinearSystemId.createElevatorSystem(
-      elevatorMotorSystem,
-      ElevatorConstants.carraigeMass.in(Kilograms),
-      ElevatorConstants.drumRadius.in(Meter),
-      3.5);
-      */
-  private final LinearSystem<N2, N1, N2> plant =
-      LinearSystemId.identifyPositionSystem(1.8377, 0.24912);
-
-  private final KalmanFilter<N2, N1, N2> observer =
-      new KalmanFilter<>(
-          Nat.N2(),
-          Nat.N2(),
-          plant,
-          ElevatorConstants.stateCovarianceMatrix,
-          ElevatorConstants.measurmentCovarianceMatrix,
-          ElevatorConstants.nominalLoopTime.in(Seconds));
-
-  private final LinearQuadraticRegulator<N2, N1, N2> controller =
-      new LinearQuadraticRegulator<>(
-          plant,
-          ElevatorConstants.stateExcursionToleranceMatrix,
-          ElevatorConstants.controlAuthorityMatrix,
-          ElevatorConstants.nominalLoopTime.in(Seconds));
-
-  private final LinearSystemLoop<N2, N1, N2> loop =
-      new LinearSystemLoop<>(
-          plant, controller, observer, 12.0, ElevatorConstants.nominalLoopTime.in(Seconds));
-
-  private final ElevatorFeedforward feedforward =
-      new ElevatorFeedforward(0.5151, 0.20194, 1.8601, 0.24819);
-  private final PIDController feedback = new PIDController(14.143, 0, 1.454);
 
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
@@ -136,17 +95,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
 
-    /* Configure LQR */
-    if (Robot.isReal()) {
-      controller.latencyCompensate(
-          plant, ElevatorConstants.nominalLoopTime.in(Seconds), Milliseconds.of(30.0).in(Seconds));
-    }
-
     /* Initalize Values */
     this.elevatorExtension.mut_replace(Meters.of(0.0));
     this.elevatorVelocity.mut_replace(MetersPerSecond.of(0.0));
     this.positionReference.mut_replace(Meters.of(0.0));
-    loop.setNextR(VecBuilder.fill(0, 0.0));
   }
 
   @Override
@@ -170,31 +122,11 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     // Determine desired position / state
 
     if (!this.controlSystemActive) {
-      /* We dont need to run the control loops, go ahead and return. Evrything after this should be control loops stuff */
-      /* We should keep the model of the system updated... I think. */
-      this.resetControlLoops();
       return;
     }
 
-    // Run Control Loopsaa
-    /* Set Reference */
-    loop.setNextR(VecBuilder.fill(positionReference.in(Meters), 0.0));
-
-    /* Correct kalaman state vector */
-    loop.correct(
-        VecBuilder.fill(elevatorExtension.in(Meters), elevatorVelocity.in(MetersPerSecond)));
-
-    /* Update the LQR to generate new voltage commands and use the voltages to predict the next state */
-    loop.predict(ElevatorConstants.nominalLoopTime.in(Seconds));
-
-    /* Get the calculated plant input from the U vector, (1x1 matrix) */
-
-    Voltage controlVoltage = Volts.of(loop.getU(0));
-    // controlVoltage.plus(Volts.of(Volts.of(0.5151).copySign(controlVoltage, Volts)));
-    // controlVoltage.plus(Volts.of(0.38194));
-    // Apply Control Loops
-    double cvolt = feedforward.calculate(positionReference.in(Meters));
-    cvolt += feedback.calculate(elevatorExtension.in(Meters), positionReference.in(Meters));
+    double cvolt = feedback.calculate(elevatorExtension.in(Meters), positionReference.in(Meters));
+    cvolt += feedforward.calculate(feedback.getSetpoint().velocity);
 
     elevatorIO.setMotorVoltage(Volts.of(cvolt));
   }
@@ -256,7 +188,12 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @param speed Desired elevator velocity
    */
   public void setVelocity(LinearVelocity speed) {
-    System.out.println("Method: driveSpeed - Not Implemented Yet! " + this.getSubsystem());
+    if (this.controlSystemActive == true) {
+      DriverStation.reportWarning(
+          "You must deactivate the elevator control systems before driving by voltage!", false);
+      return;
+    }
+    elevatorIO.setMotorVoltage(Volts.of(feedforward.calculate(speed.in(MetersPerSecond))));
   }
 
   /**
@@ -302,6 +239,13 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   }
 
   /**
+   * @return Status of the elevator upper limit switch
+   */
+  public boolean getLowerSoftLimit() {
+    return this.elevatorInputs.motorAPositionRad.lte(ElevatorConstants.minExtenesionRadians);
+  }
+
+  /**
    * @param direction SysIdDirection for routine
    * @return Command that runs the sysid routine requested
    */
@@ -320,22 +264,5 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   public void setZero() {
     this.elevatorIO.setZero();
-  }
-
-  public void resetControlLoops() {
-    if (!isHomed) {
-      this.notHomedAlert.set(true);
-      return;
-    }
-    this.loop.reset(
-        VecBuilder.fill(
-            this.elevatorInputs
-                .motorAPositionRad
-                .timesConversionFactor(ElevatorConstants.extensionConversionFactor)
-                .in(Meters),
-            this.elevatorInputs
-                .motorAVelocityRadPerSec
-                .timesConversionFactor(ElevatorConstants.velocityConversionFactor)
-                .in(MetersPerSecond)));
   }
 }

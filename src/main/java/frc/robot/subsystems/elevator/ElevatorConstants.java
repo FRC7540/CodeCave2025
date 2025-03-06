@@ -15,11 +15,6 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.DistanceUnit;
@@ -27,6 +22,7 @@ import edu.wpi.first.units.LinearVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Per;
@@ -47,6 +43,7 @@ public class ElevatorConstants {
   public static final Distance maxHieght = Meters.of(2.616);
 
   public static final Angle maxExtenesionRadians = Radians.of(150.0);
+  public static final Angle minExtenesionRadians = Radians.of(0.0);
 
   public static final double gerboxReduction = 1.0;
 
@@ -62,23 +59,25 @@ public class ElevatorConstants {
   public static final Per<LinearVelocityUnit, AngularVelocityUnit> velocityConversionFactor =
       velocityFactor.div(RadiansPerSecond.one());
 
+  public static final LinearVelocity MAX_VELOCITY = MetersPerSecond.of(0.5);
+  public static final LinearAcceleration MAX_ACCELERATION = MetersPerSecondPerSecond.of(1.0);
+
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);
-  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(2.6738, 2.6738);
-  public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.1, 0.1);
 
-  public static final Distance maximumPositionExcusrsion = Meters.of(0.1);
-  public static final LinearVelocity maximumVecloityExcursion = MetersPerSecond.of(0.1);
-  public static final Vector<N2> stateExcursionToleranceMatrix =
-      VecBuilder.fill(
-          maximumPositionExcusrsion.in(Meters), maximumVecloityExcursion.in(MetersPerSecond));
+  public class ControlLoopConstants {
+    public static final double P = 14.143;
+    public static final double I = 0.0;
+    public static final double D = 1.454;
+    public static final double S = 0.5151;
+    public static final double G = 0.20194;
+    public static final double V = 1.8601;
+    public static final double A = 0.24819;
+  }
 
-  public static final Voltage controlAuthority = Volts.of(12.0);
-  public static final Vector<N1> controlAuthorityMatrix =
-      VecBuilder.fill(controlAuthority.in(Volts));
   /* Sim Definitons */
   public static final Angle simMaxAngleBackup = Radians.of(250);
   public static final String simMaxAngleKey = "Elevator/simMaxAngle";
