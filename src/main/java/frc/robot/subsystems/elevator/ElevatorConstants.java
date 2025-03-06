@@ -44,7 +44,9 @@ public class ElevatorConstants {
   public static final boolean invertMotorB = false;
 
   public static final Distance minHieght = Meters.of(0);
-  public static final Distance maxHieght = Meters.of(5);
+  public static final Distance maxHieght = Meters.of(2.616);
+
+  public static final Angle maxExtenesionRadians = Radians.of(150.0);
 
   public static final double gerboxReduction = 1.0;
 
@@ -52,10 +54,11 @@ public class ElevatorConstants {
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
 
   /* Motion Unit Definitons */
-  public static final Distance extensionFactor = Meters.of(0.1);
-  public static final LinearVelocity velocityFactor = MetersPerSecond.of(0.1);
+  public static final Distance extensionFactor = Meters.of(2.616);
+  // 2.616 ( max extension) / 160 ( radian count at max extension)
+  public static final LinearVelocity velocityFactor = MetersPerSecond.of(0.01635 / 100);
   public static final Per<DistanceUnit, AngleUnit> extensionConversionFactor =
-      extensionFactor.div(Radians.one());
+      extensionFactor.div(Radians.of(160.0));
   public static final Per<LinearVelocityUnit, AngularVelocityUnit> velocityConversionFactor =
       velocityFactor.div(RadiansPerSecond.one());
 
@@ -64,14 +67,15 @@ public class ElevatorConstants {
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);
-  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3.0, 3.0);
+  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(2.6738, 2.6738);
   public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.1, 0.1);
 
-  public static final Distance maximumPositionExcusrsion = Meters.of(0.05);
+  public static final Distance maximumPositionExcusrsion = Meters.of(0.1);
   public static final LinearVelocity maximumVecloityExcursion = MetersPerSecond.of(0.1);
   public static final Vector<N2> stateExcursionToleranceMatrix =
       VecBuilder.fill(
           maximumPositionExcusrsion.in(Meters), maximumVecloityExcursion.in(MetersPerSecond));
+
   public static final Voltage controlAuthority = Volts.of(12.0);
   public static final Vector<N1> controlAuthorityMatrix =
       VecBuilder.fill(controlAuthority.in(Volts));
