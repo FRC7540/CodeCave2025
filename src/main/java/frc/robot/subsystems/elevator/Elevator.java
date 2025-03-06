@@ -17,7 +17,9 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -33,6 +35,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -83,12 +86,15 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * Inputs: [Voltage] (Input to the plant)
    * Outputs: [Position] (Current Position of the plant)
    */
+  /* private final LinearSystem<N2, N1, N2> plant =
+  LinearSystemId.createElevatorSystem(
+      elevatorMotorSystem,
+      ElevatorConstants.carraigeMass.in(Kilograms),
+      ElevatorConstants.drumRadius.in(Meter),
+      3.5);
+      */
   private final LinearSystem<N2, N1, N2> plant =
-      LinearSystemId.createElevatorSystem(
-          elevatorMotorSystem,
-          ElevatorConstants.carraigeMass.in(Kilograms),
-          ElevatorConstants.drumRadius.in(Meter),
-          3.5);
+      LinearSystemId.identifyPositionSystem(1.8377, 0.24912);
 
   private final KalmanFilter<N2, N1, N2> observer =
       new KalmanFilter<>(
@@ -110,14 +116,19 @@ public class Elevator extends SubsystemBase implements AutoClosing {
       new LinearSystemLoop<>(
           plant, controller, observer, 12.0, ElevatorConstants.nominalLoopTime.in(Seconds));
 
+  private final ElevatorFeedforward feedforward =
+      new ElevatorFeedforward(0.5151, 0.20194, 1.8601, 0.24819);
+  private final PIDController feedback = new PIDController(14.143, 0, 1.454);
+
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
+    SmartDashboard.putData("PIDSS", feedback);
     // Create the SysId routine
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                null,
-                null,
+                Volts.of(0.2).per(Second),
+                Volts.of(1.75),
                 null, // Use default config
                 (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
@@ -127,7 +138,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
     /* Configure LQR */
     if (Robot.isReal()) {
-      controller.latencyCompensate(plant, ElevatorConstants.nominalLoopTime.in(Seconds), 0.025);
+      controller.latencyCompensate(
+          plant, ElevatorConstants.nominalLoopTime.in(Seconds), Milliseconds.of(30.0).in(Seconds));
     }
 
     /* Initalize Values */
@@ -176,10 +188,15 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     loop.predict(ElevatorConstants.nominalLoopTime.in(Seconds));
 
     /* Get the calculated plant input from the U vector, (1x1 matrix) */
-    Voltage controlVoltage = Volts.of(loop.getU(0));
 
+    Voltage controlVoltage = Volts.of(loop.getU(0));
+    // controlVoltage.plus(Volts.of(Volts.of(0.5151).copySign(controlVoltage, Volts)));
+    // controlVoltage.plus(Volts.of(0.38194));
     // Apply Control Loops
-    elevatorIO.setMotorVoltage(controlVoltage);
+    double cvolt = feedforward.calculate(positionReference.in(Meters));
+    cvolt += feedback.calculate(elevatorExtension.in(Meters), positionReference.in(Meters));
+
+    elevatorIO.setMotorVoltage(Volts.of(cvolt));
   }
 
   /**
@@ -275,6 +292,13 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    */
   public boolean getUpperLimitSwitch() {
     return this.elevatorInputs.upperLimitSwitch;
+  }
+
+  /**
+   * @return Status of the elevator upper limit switch
+   */
+  public boolean getUpperSoftLimit() {
+    return this.elevatorInputs.motorAPositionRad.gte(ElevatorConstants.maxExtenesionRadians);
   }
 
   /**
