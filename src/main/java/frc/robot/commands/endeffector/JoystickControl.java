@@ -3,6 +3,7 @@ package frc.robot.commands.endeffector;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -40,7 +41,8 @@ public class JoystickControl extends Command {
             .getAngle()
             .plus(
                 Radians.of(
-                    joystickInputsSupplier.getAsDouble()
+                    -1.0
+                        * MathUtil.applyDeadband(joystickInputsSupplier.getAsDouble(), 0.1)
                         * Constants.HID.EndEffectorJoystickControlSensitivity)));
     if (intakeEffectionSupplier.getAsBoolean()) {
       endEffector.runEffectionVolts(Volts.of(6.0));
