@@ -16,22 +16,25 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.elevator.HomeElevator;
-import frc.robot.commands.elevator.elevatorJoystickControl;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -197,12 +200,13 @@ public class RobotContainer {
         new JoystickControl(
             endEffector,
             operatorController::getRightY,
-            () -> operatorController.getRightTriggerAxis() >= 0.25,
-            () -> operatorController.getLeftTriggerAxis() >= 0.25));
+            operatorController.x(),
+            operatorController.y()));
 
     operatorController.a().debounce(0.25).whileTrue(new HomeElevator(elevator));
 
-    elevator.setDefaultCommand(new elevatorJoystickControl(elevator, operatorController::getLeftY));
+    // elevator.setDefaultCommand(new elevatorJoystickControl(elevator,
+    // operatorController::getLeftY));
 
     // Example Coral Placement Code
     if (Constants.currentMode == Constants.Mode.SIM) {
@@ -251,7 +255,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    Command go =
+        new RunCommand(() -> drive.runVelocity(new ChassisSpeeds(1.0, 1.0, 0.0)), drive)
+            .withTimeout(Seconds.of(1.0)).alongWith(new RunCommand(() -> {endEffector.setControlsActive(true); endEffector.setTargetPosition(Radians.of(4.65));}, endEffector));
+    return go;
   }
 
   public void resetSimulationField() {

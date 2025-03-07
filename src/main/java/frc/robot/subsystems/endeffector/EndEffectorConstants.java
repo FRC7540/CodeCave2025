@@ -35,7 +35,7 @@ public class EndEffectorConstants {
 
   public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.075);
   public static final Angle minAngle = Radians.of(2.2);
-  public static final Angle maxAngle = Radians.of(4.4);
+  public static final Angle maxAngle = Radians.of(4.7);
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);

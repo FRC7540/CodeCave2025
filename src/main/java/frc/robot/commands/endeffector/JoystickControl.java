@@ -4,22 +4,22 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.endeffector.EndEffector;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class JoystickControl extends Command {
   private final EndEffector endEffector;
   private final DoubleSupplier joystickInputsSupplier;
-  private final BooleanSupplier intakeEffectionSupplier;
-  private final BooleanSupplier ejectEffectionSupplier;
+  private final Trigger intakeEffectionSupplier;
+  private final Trigger ejectEffectionSupplier;
 
   public JoystickControl(
       EndEffector endEffector,
       DoubleSupplier joystickInputsSupplier,
-      BooleanSupplier runEffectionSupplier,
-      BooleanSupplier ejectEffectionSupplier) {
+      Trigger runEffectionSupplier,
+      Trigger ejectEffectionSupplier) {
     this.endEffector = endEffector;
     this.joystickInputsSupplier = joystickInputsSupplier;
     this.intakeEffectionSupplier = runEffectionSupplier;
@@ -34,6 +34,7 @@ public class JoystickControl extends Command {
 
   @Override
   public void execute() {
+    endEffector.setControlsActive(true);
     endEffector.setTargetPosition(
         endEffector
             .getAngle()
@@ -42,11 +43,17 @@ public class JoystickControl extends Command {
                     joystickInputsSupplier.getAsDouble()
                         * Constants.HID.EndEffectorJoystickControlSensitivity)));
     if (intakeEffectionSupplier.getAsBoolean()) {
-      endEffector.runEffectionVolts(Volts.of(2.5));
+      endEffector.runEffectionVolts(Volts.of(6.0));
+      return;
+    } else {
+      endEffector.runEffectionVolts(Volts.of(0.));
     }
 
     if (ejectEffectionSupplier.getAsBoolean()) {
-      endEffector.runEffectionVolts(Volts.of(-2.5));
+      endEffector.runEffectionVolts(Volts.of(-8.0));
+      return;
+    } else {
+      endEffector.runEffectionVolts(Volts.of(0.0));
     }
   }
 
