@@ -2,6 +2,7 @@ package frc.robot.commands.elevator;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
@@ -25,11 +26,10 @@ public class elevatorJoystickControl extends Command {
   @Override
   public void execute() {
     elevator.setPosition(
-        elevator
-            .getExtension()
+        Meters.of(0.0)
             .plus(
                 Meters.of(
-                    joystickInputs.getAsDouble()
+                    MathUtil.applyDeadband(joystickInputs.getAsDouble(), 0.1)
                         * Constants.HID.ElevatorJoystickControlSensitivity)));
   }
 

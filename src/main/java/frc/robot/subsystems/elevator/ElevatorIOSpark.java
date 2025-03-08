@@ -54,7 +54,7 @@ public class ElevatorIOSpark implements ElevatorIO {
     motorAEncoder = motorA.getEncoder();
 
     var motorAConfig = new SparkMaxConfig();
-    motorAConfig.inverted(true);
+    motorAConfig.inverted(false);
     motorAConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
@@ -154,7 +154,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
     }
 
-    motorA.setVoltage(voltage);
+    // motorA.setVoltage(voltage);
   }
 
   @Override

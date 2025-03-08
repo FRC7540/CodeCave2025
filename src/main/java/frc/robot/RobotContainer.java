@@ -210,10 +210,10 @@ public class RobotContainer {
                 },
                 endEffector));
 
-    // operatorController.a().debounce(0.25).whileTrue(new HomeElevator(elevator));
+    // operatorController.y().debounce(0.25).whileTrue(new HomeElevator(elevator));
 
-    // elevator.setDefaultCommand(new elevatorJoystickControl(elevator,
-    // operatorController::getLeftY));
+    // elevator.setDefaultCommand(
+    // new elevatorJoystickControl(elevator, operatorController::getRightY));
 
     // Example Coral Placement Code
     if (Constants.currentMode == Constants.Mode.SIM) {
@@ -262,8 +262,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return DriveCommands.joystickDrive(drive, () -> -0.5, () -> 0.0, () -> 0.0)
-        .withTimeout(Seconds.of(2.0));
+    return Commands.runOnce(
+            () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+            drive)
+        .andThen(
+            DriveCommands.joystickDrive(drive, () -> -0.5, () -> 0.0, () -> 0.0)
+                .withTimeout(Seconds.of(2.0)));
     // .alongWith(
     //     new RunCommand(
     //         () -> {

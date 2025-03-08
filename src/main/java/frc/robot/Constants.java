@@ -39,7 +39,7 @@ public final class Constants {
     public static final int DRIVER_CONTROLLER_ID = 0;
     public static final int OPERATOR_CONTROLLER_ID = 1;
 
-    public static final double EndEffectorJoystickControlSensitivity = 0.5;
+    public static final double EndEffectorJoystickControlSensitivity = 0.75;
     public static final double ElevatorJoystickControlSensitivity = 0.1;
   }
 }

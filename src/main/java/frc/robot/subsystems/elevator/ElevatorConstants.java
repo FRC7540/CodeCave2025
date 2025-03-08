@@ -69,11 +69,11 @@ public class ElevatorConstants {
   public static final Time nominalLoopTime = Milliseconds.of(20);
 
   public class ControlLoopConstants {
-    public static final double P = 1.143;
+    public static final double P = 8.143;
     public static final double I = 0.0;
     public static final double D = 0.454;
-    public static final double S = 0.5151;
-    public static final double G = 0.20194;
+    public static final double S = 0.75151;
+    public static final double G = 0.50194;
     public static final double V = 1.8601;
     public static final double A = 0.24819;
   }
