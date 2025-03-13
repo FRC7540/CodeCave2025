@@ -49,6 +49,11 @@ import frc.robot.subsystems.endeffector.EmptyEndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOSpark;
+import frc.robot.subsystems.vision.EmptyVisionIO;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
@@ -66,6 +71,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Elevator elevator;
   private final EndEffector endEffector;
+  private final Vision vision;
+
   private SwerveDriveSimulation driveSimulation = null;
   // Controller
   private final CommandXboxController driverController =
@@ -94,6 +101,11 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         elevator = new Elevator(new ElevatorIOSpark());
         endEffector = new EndEffector(new EndEffectorIOSpark());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         break;
 
       case SIM:
@@ -114,6 +126,13 @@ public class RobotContainer {
                 new ModuleIOSim(driveSimulation.getModules()[3]));
         elevator = new Elevator(new ElevatorIOSim());
         endEffector = new EndEffector(new EndEffectorIOSim());
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera1, drive::getPose));
         break;
 
       default:
@@ -127,6 +146,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         elevator = new Elevator(new EmptyElevatorIO());
         endEffector = new EndEffector(new EmptyEndEffectorIO());
+        vision = new Vision(drive::addVisionMeasurement, new EmptyVisionIO(), new EmptyVisionIO());
         break;
     }
 
