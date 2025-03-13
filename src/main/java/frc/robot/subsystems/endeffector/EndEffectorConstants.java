@@ -16,17 +16,16 @@ import edu.wpi.first.units.measure.Voltage;
 public class EndEffectorConstants {
 
   /* Hardware Definitons */
-  public static final int effectionMotorCANID = 12;
   public static final Current effectionMotorMaxCurrent = Amps.of(20);
   public static final Voltage effectionMotorNominalVoltage = Volts.of(12.0);
 
-  public static final int positonalMotorCANID = 13;
   public static final Current positonalMotorMaxCurrent = Amps.of(50);
   public static final Voltage positonalMotorNominalVoltage = Volts.of(12.0);
 
   /* Motion Definitions */
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
+
   public static final double positonalDriveGearing = (26.0 / 14.0) * 12.0;
   public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
   public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;

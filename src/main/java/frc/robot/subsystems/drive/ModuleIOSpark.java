@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static frc.robot.subsystems.SystemConstants.getCanID;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
@@ -74,20 +75,20 @@ public class ModuleIOSpark implements ModuleIO {
     driveSpark =
         new SparkMax(
             switch (module) {
-              case 0 -> frontLeftDriveCanId;
-              case 1 -> frontRightDriveCanId;
-              case 2 -> backLeftDriveCanId;
-              case 3 -> backRightDriveCanId;
+              case 0 -> getCanID("driveFrontLeftDrive");
+              case 1 -> getCanID("driveFrontRightDrive");
+              case 2 -> getCanID("driveBackLeftDrive");
+              case 3 -> getCanID("driveBackRightDrive");
               default -> 0;
             },
             MotorType.kBrushless);
     turnSpark =
         new SparkMax(
             switch (module) {
-              case 0 -> frontLeftTurnCanId;
-              case 1 -> frontRightTurnCanId;
-              case 2 -> backLeftTurnCanId;
-              case 3 -> backRightTurnCanId;
+              case 0 -> getCanID("driveFrontLeftTurn");
+              case 1 -> getCanID("driveFrontRightTurn");
+              case 2 -> getCanID("driveBackLeftTurn");
+              case 3 -> getCanID("driveBackRightTurn");
               default -> 0;
             },
             MotorType.kBrushless);

@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volt;
+import static frc.robot.subsystems.SystemConstants.getCanID;
 import static frc.robot.util.ExtraUnits.RotationsPerMinute;
 import static frc.robot.util.SparkUtil.ifOk;
 import static frc.robot.util.SparkUtil.sparkStickyFault;
@@ -40,7 +41,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
       LinearFilter.singlePoleIIR(Milliseconds.of(15).in(Seconds), 0.02);
 
   public EndEffectorIOSpark() {
-    positionMotor = new SparkMax(EndEffectorConstants.positonalMotorCANID, MotorType.kBrushless);
+    positionMotor = new SparkMax(getCanID("endEffectorPositonalMotor"), MotorType.kBrushless);
     positinMotorEncoder = positionMotor.getEncoder();
     positioinMotorEndEffectorEncoder = positionMotor.getAbsoluteEncoder();
 
@@ -68,7 +69,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
 
-    effectionMotor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
+    effectionMotor = new SparkMax(getCanID("endEffectorEffectionMotor"), MotorType.kBrushless);
     effectionMotorEncoder = effectionMotor.getEncoder();
 
     var effectionMotorConfig = new SparkMaxConfig();

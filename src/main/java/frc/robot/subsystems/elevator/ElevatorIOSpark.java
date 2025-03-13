@@ -14,6 +14,7 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.subsystems.SystemConstants.getCanID;
 import static frc.robot.util.ExtraUnits.*;
 import static frc.robot.util.SparkUtil.*;
 
@@ -50,7 +51,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final Debouncer lowerLimitDebouncer;
 
   public ElevatorIOSpark() {
-    motorA = new SparkFlex(ElevatorConstants.motorACANID, MotorType.kBrushless);
+    motorA = new SparkFlex(getCanID("elevatorMotorA"), MotorType.kBrushless);
     motorAEncoder = motorA.getEncoder();
 
     var motorAConfig = new SparkMaxConfig();
@@ -68,7 +69,7 @@ public class ElevatorIOSpark implements ElevatorIO {
             motorA.configure(
                 motorAConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    motorB = new SparkMax(ElevatorConstants.motorBCANDID, MotorType.kBrushless);
+    motorB = new SparkMax(getCanID("elevatorMotorB"), MotorType.kBrushless);
     motorBEncoder = motorB.getEncoder();
 
     var motorBConfig = new SparkMaxConfig();
