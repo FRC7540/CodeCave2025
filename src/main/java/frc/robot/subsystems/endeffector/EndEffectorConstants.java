@@ -31,11 +31,11 @@ public class EndEffectorConstants {
   public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
   public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;
   public static final Angle positonEncoderOffset =
-      Radians.of((2.75 - 2.50) + Math.PI); // Math.PI * 1 - 2.6794
+      Radians.of(Math.PI - 2.75); // (2.75 - 2.50) + Math.PI
 
   public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.075);
   public static final Angle minAngle = Radians.of(2.2);
-  public static final Angle maxAngle = Radians.of(4.7);
+  public static final Angle maxAngle = Radians.of(4.4);
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);

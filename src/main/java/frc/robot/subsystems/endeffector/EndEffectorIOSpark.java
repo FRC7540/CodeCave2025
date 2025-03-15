@@ -2,7 +2,6 @@ package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.Amp;
 import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volt;
@@ -116,7 +115,8 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         positionMotor,
         positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
-            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(filt.calculate(value), RotationsPerMinute));
+            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
+                filt.calculate(value), RotationsPerMinute));
 
     sparkStickyFault = false;
     ifOk(

@@ -17,7 +17,8 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.Voltage;
@@ -36,8 +37,11 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   private final SysIdRoutine sysIdRoutine;
 
   // 0.64534
-  private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.555, 0.064817, 0.3364);
-  private final PIDController feedback = new PIDController(2.0, 0, 0.0);
+  private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
+
+  private final ProfiledPIDController feedback =
+      new ProfiledPIDController(
+          2.0, 0, 0.0, new TrapezoidProfile.Constraints(Math.PI, 3 * Math.PI));
 
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "EndEffector/controlSystemActive")
@@ -68,6 +72,8 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
         EndEffectorConstants.minControlAuthority.in(Volts),
         EndEffectorConstants.maxControlAuthority.in(Volts));
     targetAngle.mut_replace(EndEffectorConstants.maxAngle);
+
+    SmartDashboard.putData("Moai", feedback);
   }
 
   @Override
@@ -77,10 +83,13 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
     if (!this.controlSystemActive) return;
 
-    double output = feedforward.calculate(targetAngle.in(Radians), 0);
-    output +=
-        feedback.calculate(
-            targetAngle.in(Radians), endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians));
+    double output =
+        -1.0
+            * feedback.calculate(
+                endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
+                targetAngle.in(Radians));
+    output += feedforward.calculate(feedback.getSetpoint().position, 0.0);
+
     MathUtil.clamp(
         output,
         EndEffectorConstants.minControlAuthority.in(Volts),
@@ -100,6 +109,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
             EndEffectorConstants.minAngle.in(Radians),
             EndEffectorConstants.maxAngle.in(Radians)),
         Radians);
+  }
+
+  public Angle getTargetAngle() {
+    return targetAngle.copy();
   }
 
   /**

@@ -4,17 +4,22 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.endeffector.EndEffector;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class JoystickControl extends Command {
   private final EndEffector endEffector;
   private final DoubleSupplier joystickInputsSupplier;
   private final Trigger intakeEffectionSupplier;
   private final Trigger ejectEffectionSupplier;
+
+  @AutoLogOutput(key = "targetAngle")
+  private MutAngle targetAngle = Radians.mutable(0.0);
 
   public JoystickControl(
       EndEffector endEffector,
@@ -31,14 +36,16 @@ public class JoystickControl extends Command {
   @Override
   public void initialize() {
     endEffector.setControlsActive(true);
+    targetAngle.mut_replace(endEffector.getAngle());
   }
 
   @Override
   public void execute() {
     endEffector.setControlsActive(true);
+
     endEffector.setTargetPosition(
         endEffector
-            .getAngle()
+            .getTargetAngle()
             .plus(
                 Radians.of(
                     -1.0
