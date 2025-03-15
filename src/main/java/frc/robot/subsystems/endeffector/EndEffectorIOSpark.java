@@ -116,7 +116,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         positionMotor,
         positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
-            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(filt.calculate(value), RotationsPerMinute));
 
     sparkStickyFault = false;
     ifOk(
@@ -137,9 +137,6 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
-    inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
-        RadiansPerSecond.of(
-            filt.calculate(inputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond))));
   }
 
   @Override
