@@ -125,8 +125,9 @@ public class Elevator extends SubsystemBase implements AutoClosing {
       return;
     }
 
-    double cvolt = feedback.calculate(elevatorExtension.in(Meters), positionReference.in(Meters));
-    cvolt += feedforward.calculate(feedback.getSetpoint().velocity);
+    // double cvolt = feedback.calculate(elevatorExtension.in(Meters),
+    // positionReference.in(Meters));
+    double cvolt = feedforward.calculate(feedback.getSetpoint().velocity);
 
     elevatorIO.setMotorVoltage(Volts.of(cvolt));
   }

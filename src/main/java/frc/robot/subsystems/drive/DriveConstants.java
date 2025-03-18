@@ -29,7 +29,7 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.5;
+  public static final double maxSpeedMetersPerSec = 3.825;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(26.5);
   public static final double wheelBase = Units.inchesToMeters(26.5);
@@ -66,7 +66,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 40;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(1.436);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.247);
   public static final double driveMotorReduction =
       (45.0 * 22.0) / (13.0 * 15.0); // MAXSwerve with 13 pinion teeth and 22 spur teeth
   public static final DCMotor driveGearbox = DCMotor.getNEO(1);
@@ -78,10 +78,12 @@ public class DriveConstants {
       (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
   // Drive PID configuration
-  public static final double driveKp = 0.0;
-  public static final double driveKd = 0.0;
-  public static final double driveKs = 0.0;
-  public static final double driveKv = 0.1;
+  // ks 0.22608
+  // kv 0.10301
+  public static final double driveKp = 0.0175; // 0.075
+  public static final double driveKd = 0.0175; // 0.01 // NEEDS TUNING
+  public static final double driveKs = 0.223;
+  public static final double driveKv = 0.103;
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
@@ -100,7 +102,7 @@ public class DriveConstants {
 
   // Turn PID configuration
   public static final double turnKp = 2.0;
-  public static final double turnKd = 0.0;
+  public static final double turnKd = 0.4;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = 0; // Radians

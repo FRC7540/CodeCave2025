@@ -17,7 +17,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,6 +28,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -75,6 +75,7 @@ public class RobotContainer {
 
   private SwerveDriveSimulation driveSimulation = null;
   // Controller
+  private final CommandJoystick devController = new CommandJoystick(2);
   private final CommandXboxController driverController =
       new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
   private final CommandXboxController operatorController =
@@ -184,9 +185,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -devController.getY(),
+            () -> -devController.getX(),
+            () -> -devController.getTwist()));
 
     // Lock to 0° when A button is held
     driverController
@@ -282,20 +283,14 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.runOnce(
-            () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-            drive)
-        .andThen(
-            DriveCommands.joystickDrive(drive, () -> -0.5, () -> 0.0, () -> 0.0)
-                .withTimeout(Seconds.of(2.0)));
-    // .alongWith(
-    //     new RunCommand(
-    //         () -> {
-    //           endEffector.setControlsActive(true);
-    //           endEffector.setTargetPosition(Radians.of(4.65));
-    //         },
-    //         endEffector));
-    // return autoChooser.get();
+    // return Commands.runOnce(
+    //         () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //         drive)
+    //     .andThen(
+    //         DriveCommands.joystickDrive(drive, () -> -0.5, () -> 0.0, () -> 0.0)
+    //             .withTimeout(Seconds.of(2.0)));
+
+    return autoChooser.get();
   }
 
   public void resetSimulationField() {
