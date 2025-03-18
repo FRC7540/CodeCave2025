@@ -13,13 +13,13 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.*;
-
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutCurrent;
-import edu.wpi.first.units.measure.MutVoltage;
+// import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.Motor;
+// import edu.wpi.first.units.measure.MutAngle;
+// import edu.wpi.first.units.measure.MutAngularVelocity;
+// import edu.wpi.first.units.measure.MutCurrent;
+// import edu.wpi.first.units.measure.MutVoltage;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -32,16 +32,18 @@ public interface ElevatorIO extends AutoClosing {
     public boolean upperLimitSwitch = false;
 
     // Motor Values
-    public boolean motorAIsConnected = false;
-    public MutAngle motorAPositionRad = Radians.mutable(0);
-    public MutAngularVelocity motorAVelocityRadPerSec = RadiansPerSecond.mutable(0);
-    public MutVoltage motorAAppliedVolts = Volts.mutable(0.0);
-    public MutCurrent motorACurrentAmps = Amps.mutable(0.0);
-    public boolean motorBIsConnected = false;
-    public MutAngle motorBPositionRad = Radians.mutable(0);
-    public MutAngularVelocity motorBVelocityRadPerSec = RadiansPerSecond.mutable(0);
-    public MutVoltage motorBAppliedVolts = Volts.mutable(0.0);
-    public MutCurrent motorBCurrentAmps = Amps.mutable(0.0);
+    public Motor A = new Motor();
+    public Motor B = new Motor();
+    // public boolean motorAIsConnected = false;
+    // public MutAngle motorAPositionRad = Radians.mutable(0);
+    // public MutAngularVelocity motorAVelocityRadPerSec = RadiansPerSecond.mutable(0);
+    // public MutVoltage motorAAppliedVolts = Volts.mutable(0.0);
+    // public MutCurrent motorACurrentAmps = Amps.mutable(0.0);
+    // public boolean motorBIsConnected = false;
+    // public MutAngle motorBPositionRad = Radians.mutable(0);
+    // public MutAngularVelocity motorBVelocityRadPerSec = RadiansPerSecond.mutable(0);
+    // public MutVoltage motorBAppliedVolts = Volts.mutable(0.0);
+    // public MutCurrent motorBCurrentAmps = Amps.mutable(0.0);
   }
 
   /** Updates the set of loggable inputs. */

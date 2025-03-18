@@ -44,25 +44,25 @@ public class ElevatorIOSim implements ElevatorIO {
     if (elevatorSim.hasHitLowerLimit()) {
       elevatorSim.setState(VecBuilder.fill(0.0, 0.0));
     }
-    inputs.motorAPositionRad.mut_replace(
+    inputs.A.positionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
             .timesConversionFactor(ElevatorConstants.extensionConversionFactor.reciprocal()));
-    inputs.motorAVelocityRadPerSec.mut_replace(
+    inputs.A.velocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
             .timesConversionFactor(ElevatorConstants.velocityConversionFactor.reciprocal()));
-    inputs.motorAAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
-    inputs.motorACurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
-    inputs.motorAIsConnected = true;
+    inputs.A.appliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
+    inputs.A.currentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
+    inputs.A.isConnected = true;
 
-    inputs.motorBPositionRad.mut_replace(
+    inputs.B.positionRad.mut_replace(
         Meters.of(elevatorSim.getPositionMeters())
             .timesConversionFactor(ElevatorConstants.extensionConversionFactor.reciprocal()));
-    inputs.motorBVelocityRadPerSec.mut_replace(
+    inputs.B.velocityRadPerSec.mut_replace(
         MetersPerSecond.of(elevatorSim.getVelocityMetersPerSecond())
             .timesConversionFactor(ElevatorConstants.velocityConversionFactor.reciprocal()));
-    inputs.motorBAppliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
-    inputs.motorBCurrentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
-    inputs.motorBIsConnected = true;
+    inputs.B.appliedVolts.mut_replace(elevatorSim.getInput(0), Volts);
+    inputs.B.currentAmps.mut_replace(elevatorSim.getCurrentDrawAmps(), Amps);
+    inputs.B.isConnected = true;
   }
 
   @Override

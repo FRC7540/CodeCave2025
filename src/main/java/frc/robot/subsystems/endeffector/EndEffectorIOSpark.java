@@ -95,20 +95,20 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     ifOk(
         positionMotor,
         positinMotorEncoder::getPosition,
-        (value) -> inputs.positionMotorPositionRad.mut_replace(value, Rotations));
+        (value) -> inputs.position.positionRad.mut_replace(value, Rotations));
     ifOk(
         positionMotor,
         positinMotorEncoder::getVelocity,
-        (value) -> inputs.positionMotorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+        (value) -> inputs.position.velocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         positionMotor,
         new DoubleSupplier[] {positionMotor::getAppliedOutput, positionMotor::getBusVoltage},
-        (values) -> inputs.positionMotorAppliedVolts.mut_replace(values[0] * values[1], Volt));
+        (values) -> inputs.position.appliedVolts.mut_replace(values[0] * values[1], Volt));
     ifOk(
         positionMotor,
         positionMotor::getOutputCurrent,
-        (value) -> inputs.positionMotorCurrentAmps.mut_replace(value, Amp));
-    inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
+        (value) -> inputs.position.currentAmps.mut_replace(value, Amp));
+    inputs.position.isConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
     ifOk(
         positionMotor,
         positioinMotorEndEffectorEncoder::getPosition,
@@ -123,21 +123,20 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     ifOk(
         effectionMotor,
         effectionMotorEncoder::getPosition,
-        (value) -> inputs.effectionMotorPositionRad.mut_replace(value, Rotations));
+        (value) -> inputs.effection.positionRad.mut_replace(value, Rotations));
     ifOk(
         effectionMotor,
         effectionMotorEncoder::getVelocity,
-        (value) -> inputs.effectionMotorVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+        (value) -> inputs.effection.velocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         effectionMotor,
         new DoubleSupplier[] {effectionMotor::getAppliedOutput, effectionMotor::getBusVoltage},
-        (values) -> inputs.effectionMotorAppliedVolts.mut_replace(values[0] * values[1], Volt));
+        (values) -> inputs.effection.appliedVolts.mut_replace(values[0] * values[1], Volt));
     ifOk(
         effectionMotor,
         effectionMotor::getOutputCurrent,
-        (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
-    inputs.effectionMotorIsConnected =
-        effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
+        (value) -> inputs.effection.currentAmps.mut_replace(value, Amp));
+    inputs.effection.isConnected = effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
     inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
         RadiansPerSecond.of(
             filt.calculate(inputs.enfEffectorAbsoluteVelocityRadPerSec.in(RadiansPerSecond))));

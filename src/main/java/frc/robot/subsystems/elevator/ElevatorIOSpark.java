@@ -105,40 +105,36 @@ public class ElevatorIOSpark implements ElevatorIO {
     ifOk(
         motorA,
         motorAEncoder::getPosition,
-        (value) -> inputs.motorAPositionRad.mut_replace(value, Rotations));
+        (value) -> inputs.A.positionRad.mut_replace(value, Rotations));
     ifOk(
         motorA,
         motorAEncoder::getVelocity,
-        (value) -> inputs.motorAVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+        (value) -> inputs.A.velocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         motorA,
         new DoubleSupplier[] {motorA::getAppliedOutput, motorA::getBusVoltage},
-        (values) -> inputs.motorAAppliedVolts.mut_replace(values[0] * values[1], Volts));
+        (values) -> inputs.A.appliedVolts.mut_replace(values[0] * values[1], Volts));
     ifOk(
-        motorA,
-        motorA::getOutputCurrent,
-        (value) -> inputs.motorACurrentAmps.mut_replace(value, Amps));
-    inputs.motorAIsConnected = motorAConnectedDebounce.calculate(!sparkStickyFault);
+        motorA, motorA::getOutputCurrent, (value) -> inputs.A.currentAmps.mut_replace(value, Amps));
+    inputs.A.isConnected = motorAConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update Values from Motor B */
     sparkStickyFault = false;
     ifOk(
         motorB,
         motorBEncoder::getPosition,
-        (value) -> inputs.motorBPositionRad.mut_replace(value, Rotations));
+        (value) -> inputs.B.positionRad.mut_replace(value, Rotations));
     ifOk(
         motorB,
         motorBEncoder::getVelocity,
-        (value) -> inputs.motorBVelocityRadPerSec.mut_replace(value, RotationsPerMinute));
+        (value) -> inputs.B.velocityRadPerSec.mut_replace(value, RotationsPerMinute));
     ifOk(
         motorB,
         new DoubleSupplier[] {motorB::getAppliedOutput, motorB::getBusVoltage},
-        (values) -> inputs.motorBAppliedVolts.mut_replace(values[0] * values[1], Volts));
+        (values) -> inputs.B.appliedVolts.mut_replace(values[0] * values[1], Volts));
     ifOk(
-        motorB,
-        motorB::getOutputCurrent,
-        (value) -> inputs.motorBCurrentAmps.mut_replace(value, Amps));
-    inputs.motorBIsConnected = motorBConnectedDebounce.calculate(!sparkStickyFault);
+        motorB, motorB::getOutputCurrent, (value) -> inputs.B.currentAmps.mut_replace(value, Amps));
+    inputs.B.isConnected = motorBConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update values from limit switches */
     inputs.lowerLimitSwitch = lowerLimitDebouncer.calculate(lowerLimitSwitch.get());

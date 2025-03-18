@@ -26,7 +26,12 @@ public class EndEffectorConstants {
   public static final double encoderPositionFactor = 1.0;
   public static final double encoderVelocityFactor = 1.0;
 
-  public static final double positonalDriveGearing = (26.0 / 14.0) * 12.0;
+  private static final double motorGearRatio = 12.0;
+  private static final double motorGearTeethCount = 14.0;
+  private static final double effectorGearTeethCount = 26.0;
+
+  public static final double positonalDriveGearing =
+      (effectorGearTeethCount / motorGearTeethCount) * motorGearRatio;
   public static final double positonalDriveMotorEndcoderVelocityFactor = 1 / positonalDriveGearing;
   public static final double positonalDriveMotorEndcoderPositionFactor = 1 / positonalDriveGearing;
   public static final Angle positonEncoderOffset =

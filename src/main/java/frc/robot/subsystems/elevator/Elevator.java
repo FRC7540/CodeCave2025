@@ -113,10 +113,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
     // Calculate derived varibles
     elevatorExtension.mut_replace(
-        elevatorInputs.motorAPositionRad.timesConversionFactor(
+        elevatorInputs.A.positionRad.timesConversionFactor(
             ElevatorConstants.extensionConversionFactor));
     elevatorVelocity.mut_replace(
-        elevatorInputs.motorAVelocityRadPerSec.timesConversionFactor(
+        elevatorInputs.A.velocityRadPerSec.timesConversionFactor(
             ElevatorConstants.velocityConversionFactor));
 
     // Determine desired position / state
@@ -235,14 +235,14 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    * @return Status of the elevator upper limit switch
    */
   public boolean getUpperSoftLimit() {
-    return this.elevatorInputs.motorAPositionRad.gte(ElevatorConstants.maxExtenesionRadians);
+    return this.elevatorInputs.A.positionRad.gte(ElevatorConstants.maxExtenesionRadians);
   }
 
   /**
    * @return Status of the elevator upper limit switch
    */
   public boolean getLowerSoftLimit() {
-    return this.elevatorInputs.motorAPositionRad.lte(ElevatorConstants.minExtenesionRadians);
+    return this.elevatorInputs.A.positionRad.lte(ElevatorConstants.minExtenesionRadians);
   }
 
   public Distance getExtension() {
