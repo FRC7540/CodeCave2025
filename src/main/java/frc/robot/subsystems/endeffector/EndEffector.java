@@ -20,6 +20,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -66,7 +67,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 Seconds.of(20.0), // Use default config
                 (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
             new SysIdRoutine.Mechanism(
-                (voltage) -> this.runVolts(voltage),
+                (voltage) -> this.runPositionVolts(voltage),
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
 
@@ -157,13 +158,13 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   }
 
   /**
-   * Drives the elevator motors at a specified voltage, used mainly for testing/tuning
+   * Drives the end effector positonal motor at a specified voltage, used mainly for testing/tuning
    *
    * @see setControlsActive The elevator control system must be disabled for you to use this
    *     function!
    * @param voltage Elevator motor voltages
    */
-  public void driveVoltage(Voltage voltage) {
+  public void drivePositonalVoltage(Voltage voltage) {
     if (this.controlSystemActive == true) {
       DriverStation.reportWarning(
           "You must deactivate the end effector control systems before driving by voltage!", false);
@@ -177,7 +178,7 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    *
    * @param voltage voltage to drive motor at
    */
-  public void runVolts(Voltage voltage) {
+  public void runPositionVolts(Voltage voltage) {
     this.setControlsActive(false);
     endeffectorio.setPositionMotorVoltage(voltage);
   }
@@ -187,8 +188,17 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    *
    * @param voltage The voltage to run the motor at
    */
-  public void runEffectionVolts(Voltage voltage) {
-    endeffectorio.setEffectionMotorVoltage(voltage);
+  public void runEffectionVolts(Voltage controlVoltage) {
+    endeffectorio.setEffectionOpenLoopVoltage(controlVoltage);
+  }
+
+  /**
+   * Runs the end effector effection wheels at a desired velocity
+   *
+   * @param velocity The velocity to run the effection wheels at
+   */
+  public void runEffectionVelocity(AngularVelocity velocity) {
+    endeffectorio.setEffectionVelocity(velocity);
   }
 
   /**
@@ -223,9 +233,5 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    */
   public Command sysIDDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
-  }
-
-  public void driveEffectionMotor(Voltage controlVoltage) {
-    endeffectorio.setEffectionMotorVoltage(controlVoltage);
   }
 }

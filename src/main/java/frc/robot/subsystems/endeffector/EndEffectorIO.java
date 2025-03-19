@@ -34,5 +34,7 @@ public interface EndEffectorIO extends AutoClosing {
 
   public default void setPositionMotorVoltage(Voltage voltage) {}
 
-  public default void setEffectionMotorVoltage(Voltage voltage) {}
+  public default void setEffectionOpenLoopVoltage(Voltage voltage) {}
+
+  public default void setEffectionVelocity(AngularVelocity velocity) {}
 }

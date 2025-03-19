@@ -57,7 +57,7 @@ public class JoystickControl extends Command {
       endEffector.runEffectionVolts(Volts.of(6.0));
       return;
     } else {
-      endEffector.runEffectionVolts(Volts.of(0.));
+      endEffector.runEffectionVolts(Volts.of(0.0));
     }
 
     if (ejectEffectionSupplier.getAsBoolean()) {

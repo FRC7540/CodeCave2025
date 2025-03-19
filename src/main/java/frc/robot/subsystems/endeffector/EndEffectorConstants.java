@@ -3,6 +3,7 @@ package frc.robot.subsystems.endeffector;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
@@ -44,6 +45,25 @@ public class EndEffectorConstants {
     public static final Angle STOW_WITH_ALAGE = Radians.of(4.0);
     public static final Angle REEF_PICKUP = Radians.of(3.14);
     public static final Angle STOW_WITHOUT_ALAGE = Radians.of(4.0);
+  }
+
+  public class EffectionPresets {
+    public static final Voltage ALAGE_INTAKE_VOLTAGE = Volts.of(6.0);
+    public static final Voltage ALAGE_EJECTION_VOLTAGE = Volts.of(-8.0);
+  }
+
+  public class EffectionTuning {
+    public static final double kS = 0.0;
+    public static final double kV = 0.1;
+    public static final double kP = 0.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(25.0);
+  }
+
+  public class EffectionHardwareDefinitions {
+    public static final double encoderVelocityConversionFactor = 4.0;
+    public static final double encoderPositionConversionFactor = 4.0;
   }
 
   /* Control System Definitions */

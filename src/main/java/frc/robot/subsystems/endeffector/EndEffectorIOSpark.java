@@ -2,7 +2,9 @@ package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.Amp;
 import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volt;
 import static frc.robot.util.ExtraUnits.RotationsPerMinute;
@@ -12,15 +14,21 @@ import static frc.robot.util.SparkUtil.tryUntilOk;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.function.DoubleSupplier;
 
@@ -36,6 +44,8 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final RelativeEncoder effectionMotorEncoder;
   private final Debouncer effectionMotorConnectedDebouncer =
       new Debouncer(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
+
+  private final SparkClosedLoopController effectionController;
 
   private final LinearFilter filt =
       LinearFilter.singlePoleIIR(
@@ -54,6 +64,15 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     positionMotorConfig.absoluteEncoder.inverted(true);
     positionMotorConfig.absoluteEncoder.zeroOffset(
         EndEffectorConstants.positonEncoderOffset.in(Rotations));
+    positionMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    positionMotorConfig
+        .softLimit
+        .forwardSoftLimit(EndEffectorConstants.minAngle.in(Rotations))
+        .forwardSoftLimitEnabled(true);
+    positionMotorConfig
+        .softLimit
+        .reverseSoftLimit(EndEffectorConstants.maxAngle.in(Rotations))
+        .reverseSoftLimitEnabled(true);
     positionMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) EndEffectorConstants.positonalMotorMaxCurrent.in(Amp))
@@ -72,12 +91,32 @@ public class EndEffectorIOSpark implements EndEffectorIO {
 
     effectionMotor = new SparkMax(EndEffectorConstants.effectionMotorCANID, MotorType.kBrushless);
     effectionMotorEncoder = effectionMotor.getEncoder();
+    effectionController = effectionMotor.getClosedLoopController();
 
     var effectionMotorConfig = new SparkMaxConfig();
     effectionMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) EndEffectorConstants.effectionMotorMaxCurrent.in(Amp))
         .voltageCompensation(EndEffectorConstants.effectionMotorNominalVoltage.in(Volt));
+    effectionMotorConfig
+        .encoder
+        .positionConversionFactor(
+            EndEffectorConstants.EffectionHardwareDefinitions.encoderPositionConversionFactor)
+        .velocityConversionFactor(
+            EndEffectorConstants.EffectionHardwareDefinitions.encoderPositionConversionFactor)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+    effectionMotorConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pidf(
+            EndEffectorConstants.EffectionTuning.kP,
+            EndEffectorConstants.EffectionTuning.kI,
+            EndEffectorConstants.EffectionTuning.kD,
+            0.0)
+        .maxMotion
+        .maxAcceleration(
+            EndEffectorConstants.EffectionTuning.MAX_ACCELERATION.in(RotationsPerSecondPerSecond));
 
     tryUntilOk(
         effectionMotor,
@@ -159,7 +198,20 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   }
 
   @Override
-  public void setEffectionMotorVoltage(Voltage voltage) {
+  public void setEffectionOpenLoopVoltage(Voltage voltage) {
     effectionMotor.setVoltage(voltage);
+  }
+
+  @Override
+  public void setEffectionVelocity(AngularVelocity velocity) {
+    double ffVolts =
+        EndEffectorConstants.EffectionTuning.kS * Math.signum(velocity.in(RadiansPerSecond))
+            + EndEffectorConstants.EffectionTuning.kV * velocity.in(RadiansPerSecond);
+    effectionController.setReference(
+        velocity.in(RotationsPerMinute),
+        ControlType.kVelocity,
+        ClosedLoopSlot.kSlot0,
+        ffVolts,
+        ArbFFUnits.kVoltage);
   }
 }
