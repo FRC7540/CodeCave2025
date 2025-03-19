@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
+import frc.robot.commands.elevator.ElevatorManipulatorCommandWrapper;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -243,7 +244,7 @@ public class RobotContainer {
                         drive.setPose(
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
-                .andThen(RumbleCommands.acceptAction(driverController))
+                .andThen(RumbleCommands.actionAccepted(driverController))
                 .ignoringDisable(true));
 
     // Default Command, drive the manipulator using a joystick
@@ -264,10 +265,16 @@ public class RobotContainer {
                 },
                 endEffector));
 
-    // operatorController.y().debounce(0.25).whileTrue(new HomeElevator(elevator));
+    operatorController
+        .y()
+        .debounce(1)
+        .whileTrue(
+            ElevatorManipulatorCommandWrapper.HomeElevatorWrapped(elevator, endEffector)
+                .alongWith(RumbleCommands.actionAccepted(operatorController)));
 
-    // elevator.setDefaultCommand(
-    // new elevatorJoystickControl(elevator, operatorController::getRightY));
+    elevator.setDefaultCommand(
+        ElevatorManipulatorCommandWrapper.ElevatorJoystickControlWrapped(
+            operatorController::getRightY, elevator, endEffector));
 
     // Simulation Bindings
     if (Constants.currentMode == Constants.Mode.SIM) {

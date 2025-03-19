@@ -8,11 +8,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
 import java.util.function.DoubleSupplier;
 
-public class elevatorJoystickControl extends Command {
+public class ElevatorJoystickControl extends Command {
   private final Elevator elevator;
   private final DoubleSupplier joystickInputs;
 
-  public elevatorJoystickControl(Elevator elevator, DoubleSupplier joystickInputs) {
+  public ElevatorJoystickControl(Elevator elevator, DoubleSupplier joystickInputs) {
     this.elevator = elevator;
     this.joystickInputs = joystickInputs;
     addRequirements(elevator);

@@ -17,7 +17,7 @@ public class RumbleCommands {
   // mutexed syubsytem time.
 
   /** Two quick nudges on the given joystick */
-  public static Command acceptAction(CommandGenericHID joystick) {
+  public static Command actionAccepted(CommandGenericHID joystick) {
     return new ScheduleCommand(
         Commands.runOnce(
                 () -> {
