@@ -2,12 +2,7 @@ package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Time;
@@ -34,17 +29,18 @@ public class EndEffectorConstants {
       Radians.of(Math.PI - 2.75); // (2.75 - 2.50) + Math.PI
 
   public static final MomentOfInertia mechanismMOI = KilogramSquareMeters.of(0.075);
+
+  // Angle endstops
   public static final Angle minAngle = Radians.of(2.2);
   public static final Angle maxAngle = Radians.of(4.4);
 
+  public static final Angle minElevatorClearedAngle = Radians.of(2.5);
+  public static final Angle maxElevatorClearedAngle = Radians.of(4.0);
+
+  public static final Time DEBOUNCE_TIME = Seconds.of(0.5);
+
   /* Control System Definitions */
-  public static final Time nominalLoopTime = Milliseconds.of(20);
-  public static final Matrix<N2, N1> stateCovarianceMatrix = VecBuilder.fill(3.0, 3.0);
-  public static final Matrix<N2, N1> measurmentCovarianceMatrix = VecBuilder.fill(0.5, 0.5);
-
-  public static final Angle maximumPositionExcusrsion = Radians.of(0.01);
-  public static final AngularVelocity maximumVecloityExcursion = RadiansPerSecond.of(0.001);
-
+  public static final Time NOMINAL_LOOP_TIME = Milliseconds.of(20);
   public static final Voltage minControlAuthority = Volts.of(8.0);
   public static final Voltage maxControlAuthority = Volts.of(-4.0);
 

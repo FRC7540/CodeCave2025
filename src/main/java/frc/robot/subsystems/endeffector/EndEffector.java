@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -36,7 +37,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   private final EndEffectorInputsAutoLogged endeffectorinputs = new EndEffectorInputsAutoLogged();
   private final SysIdRoutine sysIdRoutine;
 
-  // 0.64534
+  private final Trigger hasBall;
+  private final Trigger clearForElevatorMotion;
+
   private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
 
   private final ProfiledPIDController feedback =
@@ -72,6 +75,25 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
         EndEffectorConstants.minControlAuthority.in(Volts),
         EndEffectorConstants.maxControlAuthority.in(Volts));
     targetAngle.mut_replace(EndEffectorConstants.maxAngle);
+
+    hasBall =
+        new Trigger(
+                () -> {
+                  return endeffectorinputs.ballDetected;
+                })
+            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
+    clearForElevatorMotion =
+        new Trigger(
+                () -> {
+                  return endeffectorinputs.endEffectorAbsolutePositionRad.lte(
+                      EndEffectorConstants.maxElevatorClearedAngle);
+                })
+            .and(
+                () -> {
+                  return endeffectorinputs.endEffectorAbsolutePositionRad.gte(
+                      EndEffectorConstants.minElevatorClearedAngle);
+                })
+            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
 
     SmartDashboard.putData("Moai", feedback);
   }
@@ -176,6 +198,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    */
   public Angle getAngle() {
     return endeffectorinputs.endEffectorAbsolutePositionRad;
+  }
+
+  public Trigger hasBall() {
+    return this.hasBall;
+  }
+
+  public Trigger clearForElevatorMotion() {
+    return this.clearForElevatorMotion;
   }
 
   /**

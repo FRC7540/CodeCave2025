@@ -29,14 +29,17 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final SparkBase positionMotor;
   private final RelativeEncoder positinMotorEncoder;
   private final AbsoluteEncoder positioinMotorEndEffectorEncoder;
-  private final Debouncer positionMotorConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer positionMotorConnectedDebouncer =
+      new Debouncer(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
 
   private final SparkBase effectionMotor;
   private final RelativeEncoder effectionMotorEncoder;
-  private final Debouncer effectionMotorConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer effectionMotorConnectedDebouncer =
+      new Debouncer(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
 
   private final LinearFilter filt =
-      LinearFilter.singlePoleIIR(Milliseconds.of(15).in(Seconds), 0.02);
+      LinearFilter.singlePoleIIR(
+          Milliseconds.of(15).in(Seconds), EndEffectorConstants.NOMINAL_LOOP_TIME.in(Seconds));
 
   public EndEffectorIOSpark() {
     positionMotor = new SparkMax(EndEffectorConstants.positonalMotorCANID, MotorType.kBrushless);
@@ -137,6 +140,8 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
+
+    inputs.ballDetected = false;
   }
 
   @Override

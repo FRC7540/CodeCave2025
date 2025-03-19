@@ -23,8 +23,10 @@ public interface EndEffectorIO extends AutoClosing {
     public MutVoltage effectionMotorAppliedVolts = Volts.mutable(0.0);
     public MutCurrent effectionMotorCurrentAmps = Amps.mutable(0.0);
 
+    // Sensor values
     public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);
     public MutAngularVelocity enfEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
+    public boolean ballDetected = false;
   }
 
   /** Updates the set of loggable inputs. */
