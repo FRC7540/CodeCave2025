@@ -16,7 +16,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorManipulatorCommandWrapper;
+import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -174,6 +174,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Configure Subsystem HumanInteraction Automations
+    endEffector.hasBall().debounce(0.25).onTrue(EndEffectorPresets.stowWithAlage(endEffector));
   }
 
   /**
@@ -255,15 +258,7 @@ public class RobotContainer {
             operatorController.rightTrigger(),
             operatorController.leftTrigger()));
 
-    operatorController
-        .a()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  endEffector.setControlsActive(true);
-                  endEffector.setTargetPosition(Radians.of(3.14));
-                },
-                endEffector));
+    operatorController.a().onTrue(EndEffectorPresets.pickupFromGround(endEffector));
 
     operatorController
         .y()

@@ -39,6 +39,13 @@ public class EndEffectorConstants {
 
   public static final Time DEBOUNCE_TIME = Seconds.of(0.5);
 
+  public class AnglePresets {
+    public static final Angle GROUND_PICKUP = Radians.of(3.14);
+    public static final Angle STOW_WITH_ALAGE = Radians.of(4.0);
+    public static final Angle REEF_PICKUP = Radians.of(3.14);
+    public static final Angle STOW_WITHOUT_ALAGE = Radians.of(4.0);
+  }
+
   /* Control System Definitions */
   public static final Time NOMINAL_LOOP_TIME = Milliseconds.of(20);
   public static final Voltage minControlAuthority = Volts.of(8.0);
