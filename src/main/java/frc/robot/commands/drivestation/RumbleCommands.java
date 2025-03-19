@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants;
 
@@ -23,24 +22,21 @@ public class RumbleCommands {
                 () -> {
                   joystick.setRumble(
                       RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                },
-                (Subsystem[]) null)
+                })
             .andThen(Commands.waitSeconds(0.1))
             .andThen(
                 Commands.runOnce(
                     () -> {
                       joystick.setRumble(
                           RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                    },
-                    (Subsystem[]) null))
+                    }))
             .andThen(Commands.waitSeconds(0.25))
             .andThen(
                 Commands.runOnce(
                         () -> {
                           joystick.setRumble(
                               RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                        },
-                        (Subsystem[]) null)
+                        })
                     .andThen(Commands.waitSeconds(0.1))
                     .andThen(
                         Commands.runOnce(
@@ -48,8 +44,7 @@ public class RumbleCommands {
                               joystick.setRumble(
                                   RumbleType.kBothRumble,
                                   Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                            },
-                            (Subsystem[]) null))));
+                            }))));
   }
   ;
 }
