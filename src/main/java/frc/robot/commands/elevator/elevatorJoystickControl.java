@@ -30,7 +30,9 @@ public class elevatorJoystickControl extends Command {
             .plus(
                 Meters.of(
                     MathUtil.applyDeadband(joystickInputs.getAsDouble(), 0.1)
-                        * Constants.HID.ElevatorJoystickControlSensitivity)));
+                        * Constants.HID
+                            .SensitivityMultipliers
+                            .ElevatorJoystickControlSensitivity)));
   }
 
   @Override

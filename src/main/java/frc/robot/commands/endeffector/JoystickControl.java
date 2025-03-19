@@ -50,7 +50,9 @@ public class JoystickControl extends Command {
                 Radians.of(
                     -1.0
                         * MathUtil.applyDeadband(joystickInputsSupplier.getAsDouble(), 0.1)
-                        * Constants.HID.EndEffectorJoystickControlSensitivity)));
+                        * Constants.HID
+                            .SensitivityMultipliers
+                            .EndEffectorJoystickControlSensitivity)));
     if (intakeEffectionSupplier.getAsBoolean()) {
       endEffector.runEffectionVolts(Volts.of(6.0));
       return;

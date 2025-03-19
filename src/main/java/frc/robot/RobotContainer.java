@@ -31,7 +31,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.drive.DriveCommands;
+import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
@@ -77,9 +78,9 @@ public class RobotContainer {
   // Controller
   private final CommandJoystick devController = new CommandJoystick(2);
   private final CommandXboxController driverController =
-      new CommandXboxController(Constants.HID.DRIVER_CONTROLLER_ID);
+      new CommandXboxController(Constants.HID.ControllerInterfaces.DRIVER_CONTROLLER_ID);
   private final CommandXboxController operatorController =
-      new CommandXboxController(Constants.HID.OPERATOR_CONTROLLER_ID);
+      new CommandXboxController(Constants.HID.ControllerInterfaces.OPERATOR_CONTROLLER_ID);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -199,7 +200,7 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> -driverController.getRightX(),
-                () -> Constants.HID.DriveSpeedSlowModeMultiplier));
+                () -> Constants.HID.SensitivityMultipliers.DriveSpeedSlowModeMultiplier));
 
     // robot-relative drive, choosing slow or fast based on OI
     driverController
@@ -211,7 +212,7 @@ public class RobotContainer {
                     () -> -driverController.getLeftY(),
                     () -> -driverController.getLeftX(),
                     () -> -driverController.getRightX(),
-                    () -> Constants.HID.DriveSpeedSlowModeMultiplier),
+                    () -> Constants.HID.SensitivityMultipliers.DriveSpeedSlowModeMultiplier),
                 DriveCommands.joystickDriveRobotRelative(
                     drive,
                     () -> -driverController.getLeftY(),
@@ -242,6 +243,7 @@ public class RobotContainer {
                         drive.setPose(
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
+                .andThen(RumbleCommands.acceptAction(driverController))
                 .ignoringDisable(true));
 
     // Default Command, drive the manipulator using a joystick
