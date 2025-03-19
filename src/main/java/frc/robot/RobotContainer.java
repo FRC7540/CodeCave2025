@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorManipulatorCommandWrapper;
+import frc.robot.commands.endeffector.AlageIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.drive.Drive;
@@ -190,39 +191,40 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -devController.getY(),
-            () -> -devController.getX(),
-            () -> -devController.getTwist()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // field-relative drive at reduced speed
     driverController
         .rightTrigger()
-        .and(driverController.y().negate())
         .whileTrue(
             DriveCommands.joystickDriveWithSpeedMultiplier(
                 drive,
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> -driverController.getRightX(),
-                () -> Constants.HID.SensitivityMultipliers.DriveSpeedSlowModeMultiplier));
+                () -> 0.1));
 
     // robot-relative drive, choosing slow or fast based on OI
     driverController
-        .y()
-        .toggleOnTrue(
-            Commands.either(
-                DriveCommands.joystickDriveRobotRelativeWithSpeeds(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> -driverController.getRightX(),
-                    () -> Constants.HID.SensitivityMultipliers.DriveSpeedSlowModeMultiplier),
-                DriveCommands.joystickDriveRobotRelative(
-                    drive,
-                    () -> -driverController.getLeftY(),
-                    () -> -driverController.getLeftX(),
-                    () -> -driverController.getRightX()),
-                operatorController.rightTrigger().toggleOnTrue(Commands.none())));
+        .leftTrigger()
+        .whileTrue(
+            DriveCommands.joystickDriveRobotRelative(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> -driverController.getRightX()));
+
+    driverController
+        .leftBumper()
+        .whileTrue(
+            DriveCommands.joystickDriveRobotRelativeWithSpeeds(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> -driverController.getRightX(),
+                () -> 0.5));
 
     // Lock to 0° when A button is held
     driverController
@@ -258,7 +260,7 @@ public class RobotContainer {
             operatorController.rightTrigger(),
             operatorController.leftTrigger()));
 
-    operatorController.a().onTrue(EndEffectorPresets.pickupFromGround(endEffector));
+    operatorController.a().onTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
 
     operatorController
         .y()

@@ -67,11 +67,11 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     positionMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     positionMotorConfig
         .softLimit
-        .forwardSoftLimit(EndEffectorConstants.minAngle.in(Rotations))
+        .forwardSoftLimit(EndEffectorConstants.maxAngle.in(Rotations))
         .forwardSoftLimitEnabled(true);
     positionMotorConfig
         .softLimit
-        .reverseSoftLimit(EndEffectorConstants.maxAngle.in(Rotations))
+        .reverseSoftLimit(EndEffectorConstants.minAngle.in(Rotations))
         .reverseSoftLimitEnabled(true);
     positionMotorConfig
         .idleMode(IdleMode.kBrake)

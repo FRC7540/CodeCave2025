@@ -154,7 +154,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
     }
 
-    motorA.setVoltage(voltage);
+    motorA.setVoltage(Volts.of(0.0));
   }
 
   @Override

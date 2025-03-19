@@ -38,7 +38,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   private final EndEffectorInputsAutoLogged endeffectorinputs = new EndEffectorInputsAutoLogged();
   private final SysIdRoutine sysIdRoutine;
 
+  @AutoLogOutput(key = "EndEffector/hasBall")
   private final Trigger hasBall;
+
   private final Trigger clearForElevatorMotion;
 
   private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
