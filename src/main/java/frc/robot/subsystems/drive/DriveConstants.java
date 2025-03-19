@@ -80,10 +80,11 @@ public class DriveConstants {
   // Drive PID configuration
   // ks 0.22608
   // kv 0.10301
-  public static final double driveKp = 0.0175; // 0.075
-  public static final double driveKd = 0.0175; // 0.01 // NEEDS TUNING
-  public static final double driveKs = 0.223;
-  public static final double driveKv = 0.103;
+  public static final double driveKp = 0.0; // 0.0175
+  public static final double driveKd = 0.0; // 0.0175 // NEEDS TUNING
+  public static final double driveKs = 0.21956; // 0.223
+  public static final double driveKv = 0.10216; // 0.103
+  public static final double driveKa = 0.0055664; // 0.0
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
