@@ -189,6 +189,36 @@ public class RobotContainer {
             () -> -devController.getX(),
             () -> -devController.getTwist()));
 
+    // field-relative drive at reduced speed
+    driverController
+        .rightTrigger()
+        .and(driverController.y().negate())
+        .whileTrue(
+            DriveCommands.joystickDriveWithSpeedMultiplier(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> -driverController.getRightX(),
+                () -> Constants.HID.DriveSpeedSlowModeMultiplier));
+
+    // robot-relative drive, choosing slow or fast based on OI
+    driverController
+        .y()
+        .toggleOnTrue(
+            Commands.either(
+                DriveCommands.joystickDriveRobotRelativeWithSpeeds(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> -driverController.getRightX(),
+                    () -> Constants.HID.DriveSpeedSlowModeMultiplier),
+                DriveCommands.joystickDriveRobotRelative(
+                    drive,
+                    () -> -driverController.getLeftY(),
+                    () -> -driverController.getLeftX(),
+                    () -> -driverController.getRightX()),
+                operatorController.rightTrigger().toggleOnTrue(Commands.none())));
+
     // Lock to 0° when A button is held
     driverController
         .a()
@@ -205,6 +235,7 @@ public class RobotContainer {
     // Reset gyro to 0° when B button is pressed
     driverController
         .b()
+        .debounce(1)
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -236,7 +267,7 @@ public class RobotContainer {
     // elevator.setDefaultCommand(
     // new elevatorJoystickControl(elevator, operatorController::getRightY));
 
-    // Example Coral Placement Code
+    // Simulation Bindings
     if (Constants.currentMode == Constants.Mode.SIM) {
       configureSimulationButtonBindings();
     }
