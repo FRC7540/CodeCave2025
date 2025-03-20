@@ -72,8 +72,6 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 (voltage) -> this.runPositionVolts(voltage),
                 null, // No log consumer, since data is recorded by AdvantageKit
                 this));
-
-    feedback.setTolerance(0.01);
     feedback.setIntegratorRange(
         EndEffectorConstants.minControlAuthority.in(Volts),
         EndEffectorConstants.maxControlAuthority.in(Volts));
