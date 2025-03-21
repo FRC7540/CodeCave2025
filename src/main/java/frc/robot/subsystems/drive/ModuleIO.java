@@ -13,7 +13,10 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Celsius;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.MutTemperature;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -25,12 +28,14 @@ public interface ModuleIO extends AutoClosing {
     public double driveVelocityRadPerSec = 0.0;
     public double driveAppliedVolts = 0.0;
     public double driveCurrentAmps = 0.0;
+    public MutTemperature driveTemperature = Celsius.mutable(0.0);
 
     public boolean turnConnected = false;
     public Rotation2d turnPosition = new Rotation2d();
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
+    public MutTemperature turnTemperature = Celsius.mutable(0.0);
 
     public double[] odometryTimestamps = new double[] {};
     public double[] odometryDrivePositionsRad = new double[] {};

@@ -15,6 +15,7 @@ public interface EndEffectorIO extends AutoClosing {
     public MutAngularVelocity positionMotorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
     public MutVoltage positionMotorAppliedVolts = Volts.mutable(0.0);
     public MutCurrent positionMotorCurrentAmps = Amps.mutable(0.0);
+    public MutTemperature positionMotorTemperature = Celsius.mutable(0.0);
 
     // Effection Motor Values
     public boolean effectionMotorIsConnected = false;
@@ -22,6 +23,7 @@ public interface EndEffectorIO extends AutoClosing {
     public MutAngularVelocity effectionMotorVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
     public MutVoltage effectionMotorAppliedVolts = Volts.mutable(0.0);
     public MutCurrent effectionMotorCurrentAmps = Amps.mutable(0.0);
+    public MutTemperature effectionMotorTemperature = Celsius.mutable(0.0);
 
     // Sensor values
     public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);

@@ -14,6 +14,7 @@ public interface ClimberIO {
     public MutAngularVelocity motorVelocityRadPerSec = RadiansPerSecond.mutable(0);
     public MutVoltage motorAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorCurrentAmps = Amps.mutable(0.0);
+    public MutTemperature motorTemperature = Celsius.mutable(0.0);
   }
 
   /** Updates the set of loggable inputs. */

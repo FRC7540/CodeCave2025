@@ -13,6 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Celsius;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
@@ -185,6 +186,11 @@ public class ModuleIOSpark implements ModuleIO {
         new DoubleSupplier[] {driveSpark::getAppliedOutput, driveSpark::getBusVoltage},
         (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
     ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
+    ifOk(
+        driveSpark,
+        driveSpark::getMotorTemperature,
+        (value) -> inputs.driveTemperature.mut_replace(value, Celsius));
+
     inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
 
     // Update turn inputs
@@ -199,6 +205,11 @@ public class ModuleIOSpark implements ModuleIO {
         new DoubleSupplier[] {turnSpark::getAppliedOutput, turnSpark::getBusVoltage},
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
+    ifOk(
+        turnSpark,
+        driveSpark::getMotorTemperature,
+        (value) -> inputs.turnTemperature.mut_replace(value, Celsius));
+
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
 
     // Update odometry inputs

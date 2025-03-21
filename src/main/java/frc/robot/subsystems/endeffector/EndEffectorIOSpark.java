@@ -1,6 +1,7 @@
 package frc.robot.subsystems.endeffector;
 
 import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -148,7 +149,10 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         positionMotor,
         positionMotor::getOutputCurrent,
         (value) -> inputs.positionMotorCurrentAmps.mut_replace(value, Amp));
-    inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
+    ifOk(
+        positionMotor,
+        positionMotor::getMotorTemperature,
+        (value) -> inputs.positionMotorTemperature.mut_replace(value, Celsius));
     ifOk(
         positionMotor,
         positioinMotorEndEffectorEncoder::getPosition,
@@ -159,6 +163,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         (value) ->
             inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
                 filt.calculate(value), RotationsPerMinute));
+    inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
     sparkStickyFault = false;
     ifOk(
@@ -177,6 +182,10 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         effectionMotor,
         effectionMotor::getOutputCurrent,
         (value) -> inputs.effectionMotorCurrentAmps.mut_replace(value, Amp));
+    ifOk(
+        effectionMotor,
+        effectionMotor::getMotorTemperature,
+        (value) -> inputs.effectionMotorTemperature.mut_replace(value, Celsius));
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 

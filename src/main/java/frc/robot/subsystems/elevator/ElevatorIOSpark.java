@@ -118,6 +118,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         motorA,
         motorA::getOutputCurrent,
         (value) -> inputs.motorACurrentAmps.mut_replace(value, Amps));
+    ifOk(
+        motorA,
+        motorA::getMotorTemperature,
+        (value) -> inputs.motorATemperature.mut_replace(value, Celsius));
     inputs.motorAIsConnected = motorAConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update Values from Motor B */
@@ -138,6 +142,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         motorB,
         motorB::getOutputCurrent,
         (value) -> inputs.motorBCurrentAmps.mut_replace(value, Amps));
+    ifOk(
+        motorB,
+        motorB::getMotorTemperature,
+        (value) -> inputs.motorBTemperature.mut_replace(value, Celsius));
     inputs.motorBIsConnected = motorBConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update values from limit switches */

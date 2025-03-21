@@ -61,6 +61,10 @@ public class ClimberIOSpark implements ClimberIO {
         motor,
         motor::getOutputCurrent,
         (value) -> inputs.motorCurrentAmps.mut_replace(value, Amps));
+    ifOk(
+        motor,
+        motor::getMotorTemperature,
+        (value) -> inputs.motorTemperature.mut_replace(value, Celsius));
     inputs.motorIsConnected = motorConnectedDebouncer.calculate(!sparkStickyFault);
   }
 

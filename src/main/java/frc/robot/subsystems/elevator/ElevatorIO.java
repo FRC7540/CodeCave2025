@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutCurrent;
+import edu.wpi.first.units.measure.MutTemperature;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.AutoClosing;
@@ -37,11 +38,14 @@ public interface ElevatorIO extends AutoClosing {
     public MutAngularVelocity motorAVelocityRadPerSec = RadiansPerSecond.mutable(0);
     public MutVoltage motorAAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorACurrentAmps = Amps.mutable(0.0);
+    public MutTemperature motorATemperature = Celsius.mutable(0.0);
+
     public boolean motorBIsConnected = false;
     public MutAngle motorBPositionRad = Radians.mutable(0);
     public MutAngularVelocity motorBVelocityRadPerSec = RadiansPerSecond.mutable(0);
     public MutVoltage motorBAppliedVolts = Volts.mutable(0.0);
     public MutCurrent motorBCurrentAmps = Amps.mutable(0.0);
+    public MutTemperature motorBTemperature = Celsius.mutable(0.0);
   }
 
   /** Updates the set of loggable inputs. */
