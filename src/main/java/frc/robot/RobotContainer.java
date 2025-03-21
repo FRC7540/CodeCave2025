@@ -36,6 +36,10 @@ import frc.robot.commands.elevator.ElevatorManipulatorCommandWrapper;
 import frc.robot.commands.endeffector.AlageIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOSim;
+import frc.robot.subsystems.climber.ClimberIOSpark;
+import frc.robot.subsystems.climber.EmptyClimberIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.subsystems.drive.GyroIO;
@@ -75,6 +79,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final EndEffector endEffector;
   private final Vision vision;
+  private final Climber climber;
 
   private SwerveDriveSimulation driveSimulation = null;
   // Controller
@@ -110,6 +115,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+        climber = new Climber(new ClimberIOSpark());
         break;
 
       case SIM:
@@ -137,6 +143,7 @@ public class RobotContainer {
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera1, drive::getPose));
+        climber = new Climber(new ClimberIOSim());
         break;
 
       default:
@@ -151,6 +158,7 @@ public class RobotContainer {
         elevator = new Elevator(new EmptyElevatorIO());
         endEffector = new EndEffector(new EmptyEndEffectorIO());
         vision = new Vision(drive::addVisionMeasurement, new EmptyVisionIO(), new EmptyVisionIO());
+        climber = new Climber(new EmptyClimberIO());
         break;
     }
 
