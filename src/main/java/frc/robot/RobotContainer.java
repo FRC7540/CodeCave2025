@@ -32,7 +32,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
-import frc.robot.commands.elevator.ElevatorManipulatorCommandWrapper;
+import frc.robot.commands.elevator.ElevatorPresets;
+import frc.robot.commands.elevator.SafteyWrapper;
 import frc.robot.commands.endeffector.AlageIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
@@ -274,12 +275,46 @@ public class RobotContainer {
         .y()
         .debounce(1)
         .whileTrue(
-            ElevatorManipulatorCommandWrapper.HomeElevatorWrapped(elevator, endEffector)
+            SafteyWrapper.HomeElevatorWrapped(elevator, endEffector)
                 .alongWith(RumbleCommands.actionAccepted(operatorController)));
 
     elevator.setDefaultCommand(
-        ElevatorManipulatorCommandWrapper.ElevatorJoystickControlWrapped(
+        SafteyWrapper.ElevatorJoystickControlWrapped(
             operatorController::getRightY, elevator, endEffector));
+
+    /* Elevator reef controls */
+    operatorController
+        .rightTrigger()
+        .and(operatorController.a())
+        .and(operatorController.leftTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.reefLevelOne(elevator), endEffector));
+    operatorController
+        .rightTrigger()
+        .and(operatorController.b())
+        .and(operatorController.leftTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.reefLevelTwo(elevator), endEffector));
+    operatorController
+        .rightTrigger()
+        .and(operatorController.x())
+        .and(operatorController.leftTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.reefLevelThree(elevator), endEffector));
+    operatorController
+        .rightTrigger()
+        .and(operatorController.y())
+        .and(operatorController.leftTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.reefLevelFour(elevator), endEffector));
+
+    /* Other Elevator Controls */
+    operatorController
+        .leftTrigger()
+        .and(operatorController.a())
+        .and(operatorController.rightTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.floor(elevator), endEffector));
+    operatorController
+        .leftTrigger()
+        .and(operatorController.b())
+        .and(operatorController.rightTrigger().negate())
+        .whileTrue(SafteyWrapper.wrap(ElevatorPresets.barge(elevator), endEffector));
 
     // Simulation Bindings
     if (Constants.currentMode == Constants.Mode.SIM) {

@@ -30,6 +30,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Preferences;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -154,7 +155,12 @@ public class ElevatorIOSpark implements ElevatorIO {
       voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
     }
 
-    motorA.setVoltage(Volts.of(0.0));
+    if (Preferences.getBoolean("FF/Elevator", false)) {
+      motorA.setVoltage(voltage);
+
+    } else {
+      motorA.setVoltage(Volts.zero());
+    }
   }
 
   @Override

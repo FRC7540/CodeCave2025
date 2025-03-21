@@ -78,6 +78,15 @@ public class ElevatorConstants {
     public static final double A = 0.24819;
   }
 
+  public class Presets {
+    public static final Distance floor = Meters.of(0.0);
+    public static final Distance reefLevelOne = Meters.of(0.0);
+    public static final Distance reefLevelTwo = Meters.of(0.0);
+    public static final Distance reefLevelThree = Meters.of(0.0);
+    public static final Distance reefLevelFour = Meters.of(0.0);
+    public static final Distance barge = Meters.of(0.0);
+  }
+
   /* Sim Definitons */
   public static final Angle simMaxAngleBackup = Radians.of(250);
   public static final String simMaxAngleKey = "Elevator/simMaxAngle";
