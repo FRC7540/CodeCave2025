@@ -5,7 +5,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import java.util.function.DoubleSupplier;
 
-public class SafteyWrapper {
+public class ElevatorSafteyWrapper {
 
   public static Command wrap(Command elevatorCommand, EndEffector endEffector) {
     return elevatorCommand.onlyWhile(endEffector.clearForElevatorMotion());

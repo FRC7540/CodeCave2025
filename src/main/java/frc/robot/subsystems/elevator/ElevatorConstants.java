@@ -64,6 +64,7 @@ public class ElevatorConstants {
 
   /* Other Definitons */
   public static final Time limitSwitchDebounceTime = Milliseconds.of(20);
+  public static final Time GENERAL_DEBOUNCE_TIME = Seconds.of(0.5);
 
   /* Control System Definitions */
   public static final Time nominalLoopTime = Milliseconds.of(20);

@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.Celsius;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.drive.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
@@ -60,8 +61,8 @@ public class ModuleIOSpark implements ModuleIO {
   private final Queue<Double> turnPositionQueue;
 
   // Connection debouncers
-  private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
-  private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer driveConnectedDebounce = new Debouncer(GENERAL_DEBOUNCE_TIME.in(Seconds));
+  private final Debouncer turnConnectedDebounce = new Debouncer(GENERAL_DEBOUNCE_TIME.in(Seconds));
 
   public ModuleIOSpark(int module) {
     zeroRotation =

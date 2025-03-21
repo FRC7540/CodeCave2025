@@ -43,8 +43,10 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final SparkBase motorB;
   private final RelativeEncoder motorAEncoder;
   private final RelativeEncoder motorBEncoder;
-  private final Debouncer motorAConnectedDebounce = new Debouncer(0.5);
-  private final Debouncer motorBConnectedDebounce = new Debouncer(0.5);
+  private final Debouncer motorAConnectedDebounce =
+      new Debouncer(ElevatorConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
+  private final Debouncer motorBConnectedDebounce =
+      new Debouncer(ElevatorConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
   private final DigitalInput lowerLimitSwitch;
   private final DigitalInput upperLimitSwitch;
   private final Debouncer upperLimitDebouncer;

@@ -20,7 +20,8 @@ public class ClimberIOSpark implements ClimberIO {
 
   private final SparkBase motor;
   private final RelativeEncoder motorEncoder;
-  private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
+  private final Debouncer motorConnectedDebouncer =
+      new Debouncer(ClimberConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
 
   public ClimberIOSpark() {
     motor = new SparkMax(ClimberConstants.motorCANId, MotorType.kBrushless);

@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Kilogram;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.config.ModuleConfig;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Time;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -50,7 +52,6 @@ public class DriveConstants {
       new Rotation2d(-2.286 + 3.141); // -0.478 // 1.802
   public static final Rotation2d backRightZeroRotation = new Rotation2d(-2.550); // 1.747
 
-  // 2.164
   // Device CAN IDs
   public static final int pigeonCanId = 9;
 
@@ -142,4 +143,5 @@ public class DriveConstants {
                   Meters.of(wheelRadiusMeters),
                   KilogramSquareMeters.of(0.02),
                   wheelCOF));
+  public static final Time GENERAL_DEBOUNCE_TIME = Seconds.of(0.5);
 }

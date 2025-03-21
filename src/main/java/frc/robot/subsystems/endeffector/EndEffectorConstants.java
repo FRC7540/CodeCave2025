@@ -38,6 +38,10 @@ public class EndEffectorConstants {
   public static final Angle minElevatorClearedAngle = Radians.of(2.5);
   public static final Angle maxElevatorClearedAngle = Radians.of(4.0);
 
+  public static final Angle climbClearedAngle = Radians.of(2.5);
+
+  public static final Angle clearForClimbTolerance = Degrees.of(5);
+
   public static final Time DEBOUNCE_TIME = Seconds.of(0.5);
 
   public class AnglePresets {

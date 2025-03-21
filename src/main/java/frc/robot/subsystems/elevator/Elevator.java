@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -79,6 +80,9 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   @AutoLogOutput(key = "Elevator/controlSystemActive")
   private boolean controlSystemActive = false;
 
+  @AutoLogOutput(key = "Elevator/ClearForClimb")
+  private final Trigger clearForClimb;
+
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
     SmartDashboard.putData("PIDSS", feedback);
@@ -99,6 +103,10 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     this.elevatorExtension.mut_replace(Meters.of(0.0));
     this.elevatorVelocity.mut_replace(MetersPerSecond.of(0.0));
     this.positionReference.mut_replace(Meters.of(0.0));
+
+    this.clearForClimb =
+        new Trigger(() -> this.getExtension().isEquivalent(Meters.zero()))
+            .debounce(ElevatorConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
   }
 
   @Override
@@ -172,6 +180,15 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    */
   public boolean getHomed() {
     return this.isHomed;
+  }
+
+  /**
+   * Tells us wether or not we have been homed already
+   *
+   * @see setControlsActive to set the current state of the control system
+   */
+  public Trigger getClearForClimb() {
+    return this.clearForClimb;
   }
 
   /**

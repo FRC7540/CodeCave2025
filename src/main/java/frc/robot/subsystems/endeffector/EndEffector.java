@@ -41,7 +41,11 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   @AutoLogOutput(key = "EndEffector/hasBall")
   private final Trigger hasBall;
 
+  @AutoLogOutput(key = "EndEffector/clearForElevatorMotion")
   private final Trigger clearForElevatorMotion;
+
+  @AutoLogOutput(key = "EndEffector/clearForClimb")
+  private final Trigger clearForClimb;
 
   private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
 
@@ -93,6 +97,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 () -> {
                   return endeffectorinputs.endEffectorAbsolutePositionRad.gte(
                       EndEffectorConstants.minElevatorClearedAngle);
+                })
+            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
+    clearForClimb =
+        new Trigger(
+                () -> {
+                  return endeffectorinputs.endEffectorAbsolutePositionRad.isNear(
+                      EndEffectorConstants.climbClearedAngle,
+                      EndEffectorConstants.clearForClimbTolerance);
                 })
             .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
 
