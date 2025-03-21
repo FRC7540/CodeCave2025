@@ -27,7 +27,7 @@ public interface EndEffectorIO extends AutoClosing {
 
     // Sensor values
     public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);
-    public MutAngularVelocity enfEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
+    public MutAngularVelocity endEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
     public boolean ballDetected = false;
   }
 

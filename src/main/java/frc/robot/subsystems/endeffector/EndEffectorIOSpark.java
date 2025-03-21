@@ -161,7 +161,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         positionMotor,
         positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
-            inputs.enfEffectorAbsoluteVelocityRadPerSec.mut_replace(
+            inputs.endEffectorAbsoluteVelocityRadPerSec.mut_replace(
                 filt.calculate(value), RotationsPerMinute));
     inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
