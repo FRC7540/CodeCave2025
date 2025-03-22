@@ -31,6 +31,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 
 public class EndEffectorIOSpark implements EndEffectorIO {
@@ -47,6 +48,9 @@ public class EndEffectorIOSpark implements EndEffectorIO {
       new Debouncer(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
 
   private final SparkClosedLoopController effectionController;
+
+  private final DigitalInput ballDetection = new DigitalInput(2);
+  private final Debouncer ballDetectionDebouncer = new Debouncer(0.25);
 
   private final LinearFilter filt =
       LinearFilter.singlePoleIIR(
@@ -189,7 +193,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
-    inputs.ballDetected = false;
+    inputs.ballDetected = ballDetectionDebouncer.calculate(!ballDetection.get());
   }
 
   @Override
