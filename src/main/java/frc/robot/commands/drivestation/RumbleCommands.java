@@ -27,24 +27,21 @@ public class RumbleCommands {
             .andThen(
                 Commands.runOnce(
                     () -> {
-                      joystick.setRumble(
-                          RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
+                      joystick.setRumble(RumbleType.kBothRumble, 0.0);
                     }))
             .andThen(Commands.waitSeconds(0.25))
             .andThen(
                 Commands.runOnce(
-                        () -> {
-                          joystick.setRumble(
-                              RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                        })
-                    .andThen(Commands.waitSeconds(0.1))
-                    .andThen(
-                        Commands.runOnce(
-                            () -> {
-                              joystick.setRumble(
-                                  RumbleType.kBothRumble,
-                                  Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
-                            }))));
+                    () -> {
+                      joystick.setRumble(
+                          RumbleType.kBothRumble, Constants.HID.RumbleStrengths.NUDGE_RUMBLE);
+                    }))
+            .andThen(Commands.waitSeconds(0.1))
+            .andThen(
+                Commands.runOnce(
+                    () -> {
+                      joystick.setRumble(RumbleType.kBothRumble, 0.0);
+                    })));
   }
   ;
 }
