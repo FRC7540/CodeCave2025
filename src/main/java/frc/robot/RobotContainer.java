@@ -206,7 +206,7 @@ public class RobotContainer {
 
     // field-relative drive at reduced speed
     driverController
-        .rightTrigger()
+        .rightBumper()
         .whileTrue(
             DriveCommands.joystickDriveWithSpeedMultiplier(
                 drive,
@@ -284,38 +284,38 @@ public class RobotContainer {
 
     /* Elevator reef controls */
     operatorController
-        .rightTrigger()
+        .rightBumper()
         .and(operatorController.a())
-        .and(operatorController.leftTrigger().negate())
+        .and(operatorController.leftBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelOne(elevator), endEffector));
     operatorController
-        .rightTrigger()
+        .rightBumper()
         .and(operatorController.b())
-        .and(operatorController.leftTrigger().negate())
+        .and(operatorController.leftBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelTwo(elevator), endEffector));
     operatorController
-        .rightTrigger()
+        .rightBumper()
         .and(operatorController.x())
-        .and(operatorController.leftTrigger().negate())
+        .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelThree(elevator), endEffector));
     operatorController
-        .rightTrigger()
+        .rightBumper()
         .and(operatorController.y())
-        .and(operatorController.leftTrigger().negate())
+        .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelFour(elevator), endEffector));
 
     /* Other Elevator Controls */
     operatorController
-        .leftTrigger()
+        .leftBumper()
         .and(operatorController.a())
-        .and(operatorController.rightTrigger().negate())
+        .and(operatorController.rightBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.floor(elevator), endEffector));
     operatorController
-        .leftTrigger()
+        .leftBumper()
         .and(operatorController.b())
-        .and(operatorController.rightTrigger().negate())
+        .and(operatorController.rightBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.barge(elevator), endEffector));
 
     // Simulation Bindings
