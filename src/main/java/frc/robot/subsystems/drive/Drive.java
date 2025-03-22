@@ -308,8 +308,8 @@ public class Drive extends SubsystemBase implements AutoClosing {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    // poseEstimator.addVisionMeasurement( visionRobotPoseMeters, timestampSeconds,
+    // visionMeasurementStdDevs);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
