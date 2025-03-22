@@ -33,7 +33,6 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorPresets;
 import frc.robot.commands.elevator.ElevatorSafteyWrapper;
-import frc.robot.commands.endeffector.AlageIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.climber.Climber;
@@ -269,7 +268,10 @@ public class RobotContainer {
             operatorController.rightTrigger(),
             operatorController.leftTrigger()));
 
-    operatorController.a().onTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
+    // operatorController.a().onTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
+    operatorController
+        .a()
+        .onTrue(EndEffectorPresets.pickupFromGround(endEffector).withTimeout(0.1));
 
     operatorController
         .y()
