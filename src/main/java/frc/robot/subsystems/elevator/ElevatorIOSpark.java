@@ -63,6 +63,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
     motorAConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
+    motorAConfig.softLimit.forwardSoftLimit(-5);
+    motorAConfig.softLimit.reverseSoftLimit(-40);
+    motorAConfig.softLimit.forwardSoftLimitEnabled(true);
+    motorAConfig.softLimit.reverseSoftLimitEnabled(true);
 
     tryUntilOk(
         motorA,
