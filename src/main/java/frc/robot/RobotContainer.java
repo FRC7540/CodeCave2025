@@ -131,7 +131,7 @@ public class RobotContainer {
         // create a maple-sim swerve drive simulation instance
         this.driveSimulation =
             new SwerveDriveSimulation(
-                DriveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+                DriveConstants.mapleSimConfig, new Pose2d(3, 3, Rotation2d.kZero));
         // add the simulated drivetrain to the simulation field
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         // Sim robot, instantiate physics sim IO implementations
@@ -251,7 +251,7 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
+                () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -264,7 +264,7 @@ public class RobotContainer {
             Commands.runOnce(
                     () ->
                         drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .andThen(RumbleCommands.actionAccepted(driverController))
                 .ignoringDisable(true));
@@ -380,7 +380,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return Commands.runOnce(
-    //         () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //         () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
     //         drive)
     //     .andThen(
     //         DriveCommands.joystickDrive(drive, () -> -0.5, () -> 0.0, () -> 0.0)
@@ -392,7 +392,7 @@ public class RobotContainer {
   public void resetSimulationField() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    drive.setPose(new Pose2d(3, 3, new Rotation2d()));
+    drive.setPose(new Pose2d(3, 3, Rotation2d.kZero));
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
