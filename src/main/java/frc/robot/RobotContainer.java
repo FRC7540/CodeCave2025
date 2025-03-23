@@ -16,8 +16,11 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -117,6 +120,11 @@ public class RobotContainer {
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
         climber = new Climber(new EmptyClimberIO());
+        NamedCommands.registerCommand(
+            "MoveArm",
+            Commands.run(() -> endEffector.setTargetPosition(Radians.of(3.9)), endEffector));
+        NamedCommands.registerCommand(
+            "Out", Commands.run(() -> endEffector.runEffectionVolts(Volts.of(8.0)), endEffector));
         break;
 
       case SIM:
