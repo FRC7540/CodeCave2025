@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "MoveArm"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Out"
+            "pathName": "basic"
           }
         }
       ]
