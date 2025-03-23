@@ -24,13 +24,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Preferences;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -63,7 +62,10 @@ public class ElevatorIOSpark implements ElevatorIO {
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
     motorAConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
-    motorAConfig.softLimit.forwardSoftLimit(-5);
+
+    motorAConfig.openLoopRampRate(1);
+    motorAConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    motorAConfig.softLimit.forwardSoftLimit(0);
     motorAConfig.softLimit.reverseSoftLimit(-40);
     motorAConfig.softLimit.forwardSoftLimitEnabled(true);
     motorAConfig.softLimit.reverseSoftLimitEnabled(true);
@@ -162,19 +164,14 @@ public class ElevatorIOSpark implements ElevatorIO {
   @Override
   public void setMotorVoltage(Voltage voltage) {
     /* Apply motor hardstops */
-    if (lowerLimitDebouncer.calculate(lowerLimitSwitch.get())) {
-      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
-    }
-    if (upperLimitDebouncer.calculate(upperLimitSwitch.get())) {
-      voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
-    }
+    // if (lowerLimitDebouncer.calculate(lowerLimitSwitch.get())) {
+    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
+    // }
+    // if (upperLimitDebouncer.calculate(upperLimitSwitch.get())) {
+    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
+    // }
 
-    if (Preferences.getBoolean("FF/Elevator", false)) {
-      motorA.setVoltage(voltage);
-
-    } else {
-      motorA.setVoltage(Volts.zero());
-    }
+    motorA.setVoltage(voltage);
   }
 
   @Override

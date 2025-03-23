@@ -225,7 +225,6 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     if (this.controlSystemActive == true) {
       DriverStation.reportWarning(
           "You must deactivate the elevator control systems before driving by voltage!", false);
-      return;
     }
     elevatorIO.setMotorVoltage(voltage);
   }

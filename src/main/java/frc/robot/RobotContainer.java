@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
+import frc.robot.commands.elevator.ElevatorJoystickControl;
 import frc.robot.commands.elevator.ElevatorPresets;
 import frc.robot.commands.elevator.ElevatorSafteyWrapper;
 import frc.robot.commands.endeffector.EndEffectorPresets;
@@ -280,9 +281,12 @@ public class RobotContainer {
             ElevatorSafteyWrapper.HomeElevatorWrapped(elevator, endEffector)
                 .alongWith(RumbleCommands.actionAccepted(operatorController)));
 
+    // elevator.setDefaultCommand(
+    //     ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
+    //         operatorController::getRightY, elevator, endEffector));
+
     elevator.setDefaultCommand(
-        ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
-            operatorController::getRightY, elevator, endEffector));
+        new ElevatorJoystickControl(elevator, operatorController::getRightY));
 
     /* Elevator reef controls */
     operatorController
