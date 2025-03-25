@@ -39,13 +39,13 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   private final SysIdRoutine sysIdRoutine;
 
   @AutoLogOutput(key = "EndEffector/hasBall")
-  private final Trigger hasBall;
+  private Trigger hasBall;
 
   @AutoLogOutput(key = "EndEffector/clearForElevatorMotion")
-  private final Trigger clearForElevatorMotion;
+  private Trigger clearForElevatorMotion;
 
   @AutoLogOutput(key = "EndEffector/clearForClimb")
-  private final Trigger clearForClimb;
+  private Trigger clearForClimb;
 
   private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
 
@@ -87,28 +87,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                   return endeffectorinputs.ballDetected;
                 })
             .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
-    clearForElevatorMotion =
-        new Trigger(
-                () -> {
-                  return endeffectorinputs.endEffectorAbsolutePositionRad.lte(
-                      EndEffectorConstants.maxElevatorClearedAngle);
-                })
-            .and(
-                () -> {
-                  return endeffectorinputs.endEffectorAbsolutePositionRad.gte(
-                      EndEffectorConstants.minElevatorClearedAngle);
-                })
-            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
+    clearForElevatorMotion = new Trigger(this::goodForElevation);
+
     clearForClimb =
         new Trigger(
-                () -> {
-                  return endeffectorinputs.endEffectorAbsolutePositionRad.isNear(
-                      EndEffectorConstants.climbClearedAngle,
-                      EndEffectorConstants.clearForClimbTolerance);
-                })
-            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
-
-    SmartDashboard.putData("Moai", feedback);
+            () -> {
+              return endeffectorinputs.endEffectorAbsolutePositionRad.isNear(
+                  Radians.of(4.2), Radians.of(0.1));
+            });
   }
 
   @Override
@@ -167,6 +153,11 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
    */
   public boolean getControlsActive() {
     return this.controlSystemActive;
+  }
+
+  @AutoLogOutput(key = "Good")
+  private boolean goodForElevation() {
+    return getAngle().lte(Radians.of(4.2));
   }
 
   /**
