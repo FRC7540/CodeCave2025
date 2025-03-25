@@ -104,6 +104,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     this.elevatorVelocity.mut_replace(MetersPerSecond.of(0.0));
     this.positionReference.mut_replace(Meters.of(0.0));
 
+    this.feedback.setTolerance(Centimeter.of(1.0).in(Meters));
     this.clearForClimb =
         new Trigger(() -> this.getExtension().isEquivalent(Meters.zero()))
             .debounce(ElevatorConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
@@ -133,9 +134,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
       return;
     }
 
-    // double cvolt = feedback.calculate(elevatorExtension.in(Meters),
-    // positionReference.in(Meters));
-    double cvolt = feedforward.calculate(feedback.getSetpoint().velocity);
+    double cvolt = feedback.calculate(elevatorExtension.in(Meters), positionReference.in(Meters));
+    cvolt += feedforward.calculate(feedback.getSetpoint().velocity);
 
     elevatorIO.setMotorVoltage(Volts.of(cvolt));
   }

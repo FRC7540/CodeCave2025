@@ -51,11 +51,11 @@ public class ElevatorConstants {
   public static final LinearVelocity homingSpeed = MetersPerSecond.of(0.25);
 
   /* Motion Unit Definitons */
-  public static final Distance extensionFactor = Meters.of(2.616);
+  public static final Distance extensionFactor = Meters.of(1.257);
   // 2.616 ( max extension) / 160 ( radian count at max extension)
   public static final LinearVelocity velocityFactor = MetersPerSecond.of(0.01635 / 100);
   public static final Per<DistanceUnit, AngleUnit> extensionConversionFactor =
-      extensionFactor.div(Radians.of(160.0));
+      extensionFactor.div(Radians.of(122.69566903508131));
   public static final Per<LinearVelocityUnit, AngularVelocityUnit> velocityConversionFactor =
       velocityFactor.div(RadiansPerSecond.one());
 
@@ -70,13 +70,13 @@ public class ElevatorConstants {
   public static final Time nominalLoopTime = Milliseconds.of(20);
 
   public class ControlLoopConstants {
-    public static final double P = 8.143;
-    public static final double I = 0.0;
-    public static final double D = 0.454;
-    public static final double S = 0.75151;
-    public static final double G = 0.50194;
-    public static final double V = 1.8601;
-    public static final double A = 0.24819;
+    public static final double P = 3.0; // 8.143 // 0.64662
+    public static final double I = 1.5;
+    public static final double D = 0.75; // 0.454
+    public static final double S = 0.23575;
+    public static final double G = 0.24696;
+    public static final double V = 1.7007;
+    public static final double A = 0.0;
   }
 
   public class Presets {

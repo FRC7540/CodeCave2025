@@ -17,7 +17,7 @@ public class HomeElevator extends Command {
   @Override
   public void initialize() {
     elevator.setControlsActive(false);
-    elevator.setVelocity(MetersPerSecond.of(0.1));
+    elevator.setVelocity(MetersPerSecond.of(-0.25));
     RobotContainer.unableToHomeAlert.set(false);
   }
 

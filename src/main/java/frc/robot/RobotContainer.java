@@ -26,15 +26,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
-import frc.robot.commands.elevator.ElevatorJoystickControl;
 import frc.robot.commands.elevator.ElevatorPresets;
 import frc.robot.commands.elevator.ElevatorSafteyWrapper;
 import frc.robot.commands.endeffector.EndEffectorPresets;
@@ -195,6 +197,40 @@ public class RobotContainer {
 
     // Configure Subsystem HumanInteraction Automations
     endEffector.hasBall().debounce(0.25).onTrue(EndEffectorPresets.stowWithAlage(endEffector));
+
+    DriverStation.silenceJoystickConnectionWarning(true);
+    SmartDashboard.putData("Dfor", elevator.sysIDDynamic(Direction.kForward));
+    SmartDashboard.putData("Drev", elevator.sysIDDynamic(Direction.kReverse));
+    SmartDashboard.putData("Qfor", elevator.sysIDQuasistatic(Direction.kForward));
+    SmartDashboard.putData("Qrev", elevator.sysIDQuasistatic(Direction.kReverse));
+    SmartDashboard.putData(
+        "moveend", Commands.run(() -> endEffector.setTargetPosition(Radians.of(3.5)), endEffector));
+    SmartDashboard.putData(
+        "home", ElevatorSafteyWrapper.HomeElevatorWrapped(elevator, endEffector));
+    SmartDashboard.putData(
+        "goto0.5",
+        Commands.runOnce(
+            () -> {
+              elevator.setPosition(Meters.of(0.5));
+              elevator.setControlsActive(true);
+            },
+            elevator));
+    SmartDashboard.putData(
+        "goto1.0",
+        Commands.runOnce(
+            () -> {
+              elevator.setPosition(Meters.of(1.0));
+              elevator.setControlsActive(true);
+            },
+            elevator));
+    SmartDashboard.putData(
+        "goto1.5",
+        Commands.runOnce(
+            () -> {
+              elevator.setPosition(Meters.of(1.5));
+              elevator.setControlsActive(true);
+            },
+            elevator));
   }
 
   /**
@@ -293,8 +329,8 @@ public class RobotContainer {
     //     ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
     //         operatorController::getRightY, elevator, endEffector));
 
-    elevator.setDefaultCommand(
-        new ElevatorJoystickControl(elevator, operatorController::getRightY));
+    // elevator.setDefaultCommand(
+    //     new ElevatorJoystickControl(elevator, operatorController::getRightY));
 
     /* Elevator reef controls */
     operatorController

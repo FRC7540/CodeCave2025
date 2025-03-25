@@ -50,23 +50,25 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final DigitalInput upperLimitSwitch;
   private final Debouncer upperLimitDebouncer;
   private final Debouncer lowerLimitDebouncer;
+  private boolean upperLimitReached;
+  private boolean lowerLimitReached;
 
   public ElevatorIOSpark() {
     motorA = new SparkFlex(ElevatorConstants.motorACANID, MotorType.kBrushless);
     motorAEncoder = motorA.getEncoder();
 
     var motorAConfig = new SparkMaxConfig();
-    motorAConfig.inverted(false);
+    motorAConfig.inverted(true);
     motorAConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit((int) ElevatorConstants.elevatorMotorMaxCurrent.in(Amp))
         .voltageCompensation(ElevatorConstants.elevatorMotorNominalVoltage.in(Volt));
     motorAConfig.encoder.uvwMeasurementPeriod(10).uvwAverageDepth(2);
 
-    motorAConfig.openLoopRampRate(1);
+    // motorAConfig.openLoopRampRate(1);
     motorAConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    motorAConfig.softLimit.forwardSoftLimit(0);
-    motorAConfig.softLimit.reverseSoftLimit(-40);
+    motorAConfig.softLimit.forwardSoftLimit(38);
+    motorAConfig.softLimit.reverseSoftLimit(0.0);
     motorAConfig.softLimit.forwardSoftLimitEnabled(true);
     motorAConfig.softLimit.reverseSoftLimitEnabled(true);
 
@@ -157,18 +159,23 @@ public class ElevatorIOSpark implements ElevatorIO {
     inputs.motorBIsConnected = motorBConnectedDebounce.calculate(!sparkStickyFault);
 
     /* Update values from limit switches */
-    inputs.lowerLimitSwitch = lowerLimitDebouncer.calculate(lowerLimitSwitch.get());
-    inputs.upperLimitSwitch = upperLimitDebouncer.calculate(upperLimitSwitch.get());
+    lowerLimitReached = lowerLimitDebouncer.calculate(lowerLimitSwitch.get());
+    upperLimitReached = upperLimitDebouncer.calculate(upperLimitSwitch.get());
+
+    inputs.lowerLimitSwitch = lowerLimitReached;
+    inputs.upperLimitSwitch = upperLimitReached;
   }
 
   @Override
   public void setMotorVoltage(Voltage voltage) {
-    /* Apply motor hardstops */
-    // if (lowerLimitDebouncer.calculate(lowerLimitSwitch.get())) {
-    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), 0.0, Double.MAX_VALUE));
-    // }
-    // if (upperLimitDebouncer.calculate(upperLimitSwitch.get())) {
-    //   voltage = Volts.of(MathUtil.clamp(voltage.in(Volts), Double.MIN_VALUE, 0.0));
+    double outvalue;
+    /*  Apply motor hardstops */
+    // if (lowerLimitReached) {
+    //   outvalue = MathUtil.clamp(voltage.in(Volts), 0.0, 12.0); // }
+    // } else if (upperLimitReached) {
+    //   outvalue = MathUtil.clamp(voltage.in(Volts), -12.0, 0.0);
+    // } else {
+    //   outvalue = voltage.in(Volts);
     // }
 
     motorA.setVoltage(voltage);
