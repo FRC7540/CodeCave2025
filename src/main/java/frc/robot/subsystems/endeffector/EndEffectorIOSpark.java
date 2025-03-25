@@ -193,7 +193,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     inputs.effectionMotorIsConnected =
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
-    inputs.ballDetected = ballDetectionDebouncer.calculate(!ballDetection.get());
+    inputs.ballDetected = ballDetectionDebouncer.calculate(ballDetection.get());
   }
 
   @Override
