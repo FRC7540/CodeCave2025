@@ -245,7 +245,7 @@ public class RobotContainer {
                 () -> -driverController.getRightX(),
                 () -> 0.5));
 
-    // Lock to 0° when A button is held
+    // Lock to 0 when A button is held
     driverController
         .a()
         .whileTrue(
