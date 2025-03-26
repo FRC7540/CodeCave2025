@@ -211,7 +211,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
           "You must deactivate the elevator control systems before driving by voltage!", false);
       return;
     }
-    elevatorIO.setMotorVoltage(Volts.of(feedforward.calculate(speed.in(MetersPerSecond))));
+    elevatorIO.setMotorVoltage(Volts.of(feedforward.calculate(speed.in(MetersPerSecond) - 0.4)));
   }
 
   /**
