@@ -104,7 +104,7 @@ public class DriveConstants {
 
   // Turn PID configuration
   public static final double turnKp = 2.0;
-  public static final double turnKd = 0.4;
+  public static final double turnKd = 0.2;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = 0; // Radians
