@@ -70,7 +70,7 @@ public class ElevatorIOSpark implements ElevatorIO {
     motorAConfig.softLimit.forwardSoftLimit(38);
     motorAConfig.softLimit.reverseSoftLimit(0.0);
     motorAConfig.softLimit.forwardSoftLimitEnabled(true);
-    motorAConfig.softLimit.reverseSoftLimitEnabled(true);
+    // motorAConfig.softLimit.reverseSoftLimitEnabled(true);
 
     tryUntilOk(
         motorA,
@@ -168,17 +168,13 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void setMotorVoltage(Voltage voltage) {
-    double outvalue;
+    double outvalue = voltage.in(Volts);
     /*  Apply motor hardstops */
-    // if (lowerLimitReached) {
-    //   outvalue = MathUtil.clamp(voltage.in(Volts), 0.0, 12.0); // }
-    // } else if (upperLimitReached) {
-    //   outvalue = MathUtil.clamp(voltage.in(Volts), -12.0, 0.0);
-    // } else {
-    //   outvalue = voltage.in(Volts);
-    // }
+    if (lowerLimitReached) {
+      if (outvalue < 0.0) outvalue = 0.0;
+    }
 
-    motorA.setVoltage(voltage);
+    motorA.setVoltage(outvalue);
   }
 
   @Override
