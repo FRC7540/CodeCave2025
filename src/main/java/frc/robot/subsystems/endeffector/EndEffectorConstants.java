@@ -13,7 +13,7 @@ public class EndEffectorConstants {
 
   /* Hardware Definitons */
   public static final int effectionMotorCANID = 12;
-  public static final Current effectionMotorMaxCurrent = Amps.of(20);
+  public static final Current effectionMotorMaxCurrent = Amps.of(15);
   public static final Voltage effectionMotorNominalVoltage = Volts.of(12.0);
 
   public static final int positonalMotorCANID = 13;

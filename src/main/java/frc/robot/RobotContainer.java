@@ -37,6 +37,7 @@ import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorPresets;
 import frc.robot.commands.elevator.ElevatorSafteyWrapper;
+import frc.robot.commands.endeffector.AlageIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.climber.Climber;
@@ -194,7 +195,13 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure Subsystem HumanInteraction Automations
-    endEffector.hasBall().debounce(0.25).onTrue(EndEffectorPresets.stowWithAlage(endEffector));
+    endEffector.hasBall().onTrue(EndEffectorPresets.stowWithAlage(endEffector));
+
+    endEffector
+        .hasBall()
+        .debounce(0.1)
+        .and(operatorController.leftTrigger().negate())
+        .whileTrue(Commands.run(() -> endEffector.runEffectionVolts(Volts.of(0.75)), endEffector));
 
     DriverStation.silenceJoystickConnectionWarning(true);
   }
@@ -279,10 +286,7 @@ public class RobotContainer {
             operatorController.rightTrigger(),
             operatorController.leftTrigger()));
 
-    // operatorController.a().onTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
-    operatorController
-        .a()
-        .onTrue(EndEffectorPresets.pickupFromGround(endEffector).withTimeout(0.1));
+    operatorController.a().whileTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
 
     operatorController
         .y()

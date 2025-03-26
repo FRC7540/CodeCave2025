@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -87,9 +88,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     hasBall =
         new Trigger(
                 () -> {
-                  return endeffectorinputs.ballDetected;
+                  return (endeffectorinputs.ballDetected);
                 })
-            .debounce(EndEffectorConstants.DEBOUNCE_TIME.in(Seconds));
+            .debounce(0.25, DebounceType.kBoth);
+
+    // || (endeffectorinputs.effectionMotorCurrentAmps.gte(Amps.of(10.0))
+    // && endeffectorinputs.effectionMotorAppliedVolts.gte(Volts.of(0.1))
+    // && endeffectorinputs.effectionMotorVelocityRadPerSec.lte(
+    //     RadiansPerSecond.of(2)));
     clearForElevatorMotion = new Trigger(this::goodForElevation);
 
     clearForClimb =

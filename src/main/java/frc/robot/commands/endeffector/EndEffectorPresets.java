@@ -8,45 +8,26 @@ import frc.robot.subsystems.endeffector.EndEffectorConstants;
 public class EndEffectorPresets {
 
   public static Command pickupFromGround(EndEffector endEffector) {
-    return Commands.run(
-            () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.GROUND_PICKUP),
-            endEffector)
-        .until(
-            () ->
-                endEffector
-                    .getAngle()
-                    .isEquivalent(EndEffectorConstants.AnglePresets.GROUND_PICKUP));
+    return Commands.runOnce(
+        () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.GROUND_PICKUP),
+        endEffector);
   }
 
   public static Command pickupFromReef(EndEffector endEffector) {
-    return Commands.run(
-            () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.REEF_PICKUP),
-            endEffector)
-        .until(
-            () ->
-                endEffector.getAngle().isEquivalent(EndEffectorConstants.AnglePresets.REEF_PICKUP));
+    return Commands.runOnce(
+        () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.REEF_PICKUP),
+        endEffector);
   }
 
   public static Command stowWithAlage(EndEffector endEffector) {
-    return Commands.run(
-            () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.STOW_WITH_ALAGE),
-            endEffector)
-        .until(
-            () ->
-                endEffector
-                    .getAngle()
-                    .isEquivalent(EndEffectorConstants.AnglePresets.STOW_WITH_ALAGE));
+    return Commands.runOnce(
+        () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.STOW_WITH_ALAGE),
+        endEffector);
   }
 
   public static Command stowWithoutAlage(EndEffector endEffector) {
-    return Commands.run(
-            () ->
-                endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.STOW_WITHOUT_ALAGE),
-            endEffector)
-        .until(
-            () ->
-                endEffector
-                    .getAngle()
-                    .isEquivalent(EndEffectorConstants.AnglePresets.STOW_WITHOUT_ALAGE));
+    return Commands.runOnce(
+        () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.STOW_WITHOUT_ALAGE),
+        endEffector);
   }
 }
