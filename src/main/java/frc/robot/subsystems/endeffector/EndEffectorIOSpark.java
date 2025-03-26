@@ -52,9 +52,13 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final DigitalInput ballDetection = new DigitalInput(2);
   private final Debouncer ballDetectionDebouncer = new Debouncer(0.25);
 
-  private final LinearFilter filt =
+  private final LinearFilter vfilt =
       LinearFilter.singlePoleIIR(
-          Milliseconds.of(15).in(Seconds), EndEffectorConstants.NOMINAL_LOOP_TIME.in(Seconds));
+          Milliseconds.of(75).in(Seconds), EndEffectorConstants.NOMINAL_LOOP_TIME.in(Seconds));
+
+  private final LinearFilter pfilt =
+      LinearFilter.singlePoleIIR(
+          Milliseconds.of(75).in(Seconds), EndEffectorConstants.NOMINAL_LOOP_TIME.in(Seconds));
 
   public EndEffectorIOSpark() {
     positionMotor = new SparkMax(EndEffectorConstants.positonalMotorCANID, MotorType.kBrushless);
@@ -160,13 +164,14 @@ public class EndEffectorIOSpark implements EndEffectorIO {
     ifOk(
         positionMotor,
         positioinMotorEndEffectorEncoder::getPosition,
-        (value) -> inputs.endEffectorAbsolutePositionRad.mut_replace(value, Rotations));
+        (value) ->
+            inputs.endEffectorAbsolutePositionRad.mut_replace(pfilt.calculate(value), Rotations));
     ifOk(
         positionMotor,
         positioinMotorEndEffectorEncoder::getVelocity,
         (value) ->
             inputs.endEffectorAbsoluteVelocityRadPerSec.mut_replace(
-                filt.calculate(value), RotationsPerMinute));
+                vfilt.calculate(value), RotationsPerMinute));
     inputs.positionMotorIsConnected = positionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
     sparkStickyFault = false;

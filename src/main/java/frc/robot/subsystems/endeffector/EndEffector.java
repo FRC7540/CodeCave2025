@@ -47,11 +47,11 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   @AutoLogOutput(key = "EndEffector/clearForClimb")
   private Trigger clearForClimb;
 
-  private final ArmFeedforward feedforward = new ArmFeedforward(0.3494, 0.500, 0.064817, 0.3364);
+  private final ArmFeedforward feedforward = new ArmFeedforward(0.38267, 0.43387, 0.50819);
 
   private final ProfiledPIDController feedback =
       new ProfiledPIDController(
-          2.0, 0, 0.0, new TrapezoidProfile.Constraints(Math.PI, 3 * Math.PI));
+          3.75, 0, 0.025, new TrapezoidProfile.Constraints(Math.PI, 3 * Math.PI));
 
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "EndEffector/controlSystemActive")
@@ -63,6 +63,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
   public EndEffector(EndEffectorIO endeffectorio) {
     this.endeffectorio = endeffectorio;
+    feedback.setIZone(0.08);
+    feedback.setTolerance(0.0075);
+    feedback.setIntegratorRange(-0.5, 0.5);
 
     SmartDashboard.putData(feedback);
     sysIdRoutine =
@@ -105,11 +108,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     if (!this.controlSystemActive) return;
 
     double output =
-        -1.0
-            * feedback.calculate(
-                endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
-                targetAngle.in(Radians));
-    output += feedforward.calculate(feedback.getSetpoint().position, 0.0);
+        -1.0 * feedback.calculate(endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians));
+    output +=
+        feedforward.calculate(
+            feedback.getSetpoint().position, -1.0 * feedback.getSetpoint().velocity);
 
     MathUtil.clamp(
         output,
