@@ -108,7 +108,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     if (!this.controlSystemActive) return;
 
     double output =
-        -1.0 * feedback.calculate(endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians));
+        -1.0
+            * feedback.calculate(
+                endeffectorinputs.endEffectorAbsolutePositionRad.in(Radians),
+                targetAngle.in(Radians));
     output +=
         feedforward.calculate(
             feedback.getSetpoint().position, -1.0 * feedback.getSetpoint().velocity);
