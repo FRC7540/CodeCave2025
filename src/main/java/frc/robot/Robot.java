@@ -13,14 +13,19 @@
 
 package frc.robot;
 
-import edu.wpi.first.hal.HAL;
-import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -93,7 +98,27 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     motorTemperatureEventLoopTimer.start();
+    // A wee bit of tom foolery
     HAL.report(tResourceType.kResourceType_Relay, 1);
+    if (!isSimulation()) {
+      final File file = new File("/tmp/frc_versions/FRC_Lib_Version.ini");
+      try {
+        if (file.exists() && !file.delete()) {
+          throw new IOException("Failed to delete FRC_Lib_Version.ini");
+        }
+
+        if (!file.createNewFile()) {
+          throw new IOException("Failed to create new FRC_Lib_Version.ini");
+        }
+
+        try (OutputStream output = Files.newOutputStream(file.toPath())) {
+          output.write("Coffe ".getBytes(StandardCharsets.UTF_8));
+          output.write("2026.3.2".getBytes(StandardCharsets.UTF_8));
+        }
+      } catch (IOException ex) {
+        DriverStation.reportError("Could not write FRC_Lib_Version.ini: " + ex, ex.getStackTrace());
+      }
+    }
   }
 
   /** This function is called periodically during all modes. */
