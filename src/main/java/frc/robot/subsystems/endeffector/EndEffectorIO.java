@@ -29,6 +29,7 @@ public interface EndEffectorIO extends AutoClosing {
     public MutAngle endEffectorAbsolutePositionRad = Radians.mutable(0.0);
     public MutAngularVelocity endEffectorAbsoluteVelocityRadPerSec = RadiansPerSecond.mutable(0.0);
     public boolean ballDetected = false;
+    public boolean coralDetected = false;
   }
 
   /** Updates the set of loggable inputs. */

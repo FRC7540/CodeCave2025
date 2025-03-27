@@ -50,7 +50,10 @@ public class EndEffectorIOSpark implements EndEffectorIO {
   private final SparkClosedLoopController effectionController;
 
   private final DigitalInput ballDetection = new DigitalInput(2);
-  private final Debouncer ballDetectionDebouncer = new Debouncer(0.25);
+  private final Debouncer ballDetectionDebouncer = new Debouncer(0.05);
+
+  private final DigitalInput coralDetection = new DigitalInput(3);
+  private final Debouncer coralDetectionDebouncer = new Debouncer(0.05);
 
   private final LinearFilter vfilt =
       LinearFilter.singlePoleIIR(
@@ -199,6 +202,7 @@ public class EndEffectorIOSpark implements EndEffectorIO {
         effectionMotorConnectedDebouncer.calculate(!sparkStickyFault);
 
     inputs.ballDetected = ballDetectionDebouncer.calculate(ballDetection.get());
+    inputs.coralDetected = coralDetectionDebouncer.calculate(coralDetection.get());
   }
 
   @Override

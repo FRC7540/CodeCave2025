@@ -28,7 +28,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +46,9 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
   @AutoLogOutput(key = "EndEffector/hasBall")
   private Trigger hasBall;
+
+  @AutoLogOutput(key = "EndEffector/hasCoral")
+  private Trigger hasCoral;
 
   @AutoLogOutput(key = "EndEffector/clearForElevatorMotion")
   private Trigger clearForElevatorMotion;
@@ -120,7 +122,6 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     criticalEffectionMotorOverheat.onFalse(
         Commands.runOnce(() -> criticalEfffectionMotorOverheatAlert.set(false)));
 
-    SmartDashboard.putData(feedback);
     sysIdRoutine =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -142,7 +143,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
                 () -> {
                   return (endeffectorinputs.ballDetected);
                 })
-            .debounce(0.25, DebounceType.kBoth);
+            .debounce(0.15, DebounceType.kFalling);
+
+    hasCoral =
+        new Trigger(
+                () -> {
+                  return endeffectorinputs.coralDetected;
+                })
+            .debounce(0.15, DebounceType.kFalling);
 
     // || (endeffectorinputs.effectionMotorCurrentAmps.gte(Amps.of(10.0))
     // && endeffectorinputs.effectionMotorAppliedVolts.gte(Volts.of(0.1))
