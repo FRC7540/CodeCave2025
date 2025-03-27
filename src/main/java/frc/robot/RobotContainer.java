@@ -307,7 +307,7 @@ public class RobotContainer {
         .y()
         .debounce(1)
         .whileTrue(
-            ElevatorSafteyWrapper.HomeElevatorWrapped(elevator, endEffector)
+            ElevatorSafteyWrapper.HomeElevatorWrapped(elevator, endEffector, drive)
                 .alongWith(RumbleCommands.actionAccepted(operatorController)));
 
     // elevator.setDefaultCommand(
@@ -322,36 +322,40 @@ public class RobotContainer {
         .rightBumper()
         .and(operatorController.a())
         .and(operatorController.leftBumper().negate())
-        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelOne(elevator), endEffector));
+        .whileTrue(
+            ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelOne(elevator), endEffector, drive));
     operatorController
         .rightBumper()
         .and(operatorController.b())
         .and(operatorController.leftBumper().negate())
-        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelTwo(elevator), endEffector));
+        .whileTrue(
+            ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelTwo(elevator), endEffector, drive));
     operatorController
         .rightBumper()
         .and(operatorController.x())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
-            ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelThree(elevator), endEffector));
+            ElevatorSafteyWrapper.wrap(
+                ElevatorPresets.reefLevelThree(elevator), endEffector, drive));
     operatorController
         .rightBumper()
         .and(operatorController.y())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
-            ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelFour(elevator), endEffector));
+            ElevatorSafteyWrapper.wrap(
+                ElevatorPresets.reefLevelFour(elevator), endEffector, drive));
 
     /* Other Elevator Controls */
     operatorController
         .leftBumper()
         .and(operatorController.a())
         .and(operatorController.rightBumper().negate())
-        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.floor(elevator), endEffector));
+        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.floor(elevator), endEffector, drive));
     operatorController
         .leftBumper()
         .and(operatorController.b())
         .and(operatorController.rightBumper().negate())
-        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.barge(elevator), endEffector));
+        .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.barge(elevator), endEffector, drive));
 
     // Simulation Bindings
     if (Constants.currentMode == Constants.Mode.SIM) {

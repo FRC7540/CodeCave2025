@@ -35,6 +35,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -320,5 +322,21 @@ public class Drive extends SubsystemBase implements AutoClosing {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
+  }
+
+  /** Returns the current chassis speeds of the robot. */
+  public ChassisSpeeds getCurrentChassisSpeeds() {
+    return getChassisSpeeds();
+  }
+
+  /** Returns the current linear velocity of the robot. */
+  public LinearVelocity getRobotLinearVelocity() {
+    ChassisSpeeds speeds = getChassisSpeeds();
+    return MetersPerSecond.of(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+  }
+
+  /** Returns the current angular velocity of the robot. */
+  public AngularVelocity getRobotAngularVelocity() {
+    return RadiansPerSecond.of(getChassisSpeeds().omegaRadiansPerSecond);
   }
 }
