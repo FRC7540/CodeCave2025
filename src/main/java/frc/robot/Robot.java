@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.hal.HAL;
+import edu.wpi.first.hal.FRCNetComm.tInstances;
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -90,6 +93,7 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     motorTemperatureEventLoopTimer.start();
+    HAL.report(tResourceType.kResourceType_Relay, 1);
   }
 
   /** This function is called periodically during all modes. */

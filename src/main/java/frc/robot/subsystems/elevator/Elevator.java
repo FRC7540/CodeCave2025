@@ -112,7 +112,7 @@ public class Elevator extends SubsystemBase implements AutoClosing {
   private boolean controlSystemActive = false;
 
   @AutoLogOutput(key = "Elevator/ClearForClimb")
-  private final Trigger clearForClimb;
+  private final Trigger fullyRetracted;
 
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
@@ -148,8 +148,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
     this.positionReference.mut_replace(Meters.of(0.0));
 
     this.feedback.setTolerance(Centimeter.of(1.0).in(Meters));
-    this.clearForClimb =
-        new Trigger(() -> this.getExtension().isEquivalent(Meters.zero()))
+    this.fullyRetracted =
+        new Trigger(() -> this.getExtension().isNear(Meters.zero(), Centimeters.one()))
             .debounce(ElevatorConstants.GENERAL_DEBOUNCE_TIME.in(Seconds));
   }
 
@@ -230,8 +230,8 @@ public class Elevator extends SubsystemBase implements AutoClosing {
    *
    * @see setControlsActive to set the current state of the control system
    */
-  public Trigger getClearForClimb() {
-    return this.clearForClimb;
+  public Trigger getFullyRetracted() {
+    return this.fullyRetracted;
   }
 
   /**

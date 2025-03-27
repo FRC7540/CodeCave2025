@@ -6,6 +6,6 @@ import frc.robot.subsystems.endeffector.EndEffector;
 
 public class ClimberSafteyWrapper {
   public static Command wrap(Command climberCommand, Elevator elevator, EndEffector endEffector) {
-    return climberCommand.onlyWhile(elevator.getClearForClimb().and(endEffector.clearForClimb()));
+    return climberCommand.onlyWhile(elevator.getFullyRetracted().and(endEffector.clearForClimb()));
   }
 }
