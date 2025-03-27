@@ -284,6 +284,10 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     return this.clearForElevatorMotion;
   }
 
+  public Trigger clearForClimb() {
+    return this.clearForElevatorMotion;
+  }
+
   public Temperature getPositionMotorTemperature() {
     return endeffectorinputs.positionMotorTemperature;
   }

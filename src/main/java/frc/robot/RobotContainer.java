@@ -33,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.climber.ClimberCommands;
+import frc.robot.commands.climber.ClimberSafteyWrapper;
 import frc.robot.commands.drive.DriveCommands;
 import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorPresets;
@@ -277,6 +279,19 @@ public class RobotContainer {
                     drive)
                 .andThen(RumbleCommands.actionAccepted(driverController))
                 .ignoringDisable(true));
+
+    driverController
+        .rightTrigger()
+        .and(driverController.povDown())
+        .whileTrue(
+            ClimberSafteyWrapper.wrap(
+                ClimberCommands.deployClimber(climber), elevator, endEffector));
+    driverController
+        .rightTrigger()
+        .and(driverController.povUp())
+        .whileTrue(
+            ClimberSafteyWrapper.wrap(
+                ClimberCommands.retractClimber(climber), elevator, endEffector));
 
     // Default Command, drive the manipulator using a joystick
     endEffector.setDefaultCommand(
