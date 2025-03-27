@@ -30,4 +30,10 @@ public class EndEffectorPresets {
         () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.STOW_WITHOUT_ALAGE),
         endEffector);
   }
+
+  public static Command pickupFromSource(EndEffector endEffector) {
+    return Commands.runOnce(
+        () -> endEffector.setTargetPosition(EndEffectorConstants.AnglePresets.SOURCE_PICKUP),
+        endEffector);
+  }
 }

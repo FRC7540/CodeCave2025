@@ -49,11 +49,15 @@ public class EndEffectorConstants {
     public static final Angle STOW_WITH_ALAGE = Radians.of(4.0);
     public static final Angle REEF_PICKUP = Radians.of(3.14);
     public static final Angle STOW_WITHOUT_ALAGE = Radians.of(4.0);
+    public static final Angle SOURCE_PICKUP = Radians.of(3.75);
   }
 
   public class EffectionPresets {
     public static final Voltage ALAGE_INTAKE_VOLTAGE = Volts.of(6.0);
     public static final Voltage ALAGE_EJECTION_VOLTAGE = Volts.of(-8.0);
+    public static final Voltage CORAL_INTAKE_VOLTAGE = Volts.of(-3.5);
+    public static final Voltage CORAL_EJECTION_VOLTAGE = Volts.of(5.0);
+
   }
 
   public class EffectionTuning {
