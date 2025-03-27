@@ -23,13 +23,19 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -62,11 +68,57 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
   @AutoLogOutput(key = "EndEffector/targetAngle")
   private MutAngle targetAngle = Radians.mutable(0.0);
 
+  private Trigger positionMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getPositionMotorTemperature().gte(Constants.warnNeoOneTemp));
+  private Trigger criticalPositionMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getEffectionMotorTemperature().gte(Constants.criticalNeoOneTemp));
+
+  private Alert positionMotorOverheatAlert =
+      new Alert("MotorOverheat", "Overheat in End Effector Positonal motor.", AlertType.kWarning);
+  private Alert criticalPositionMotorOverheatAlert =
+      new Alert(
+          "MotorOverheat", "Critical Overheat in End Effector Positonal motor.", AlertType.kError);
+
+  private Trigger effectionMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getEffectionMotorTemperature().gte(Constants.warnNeoFiveFiftyTemp));
+  private Trigger criticalEffectionMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> getEffectionMotorTemperature().gte(Constants.criticalNeoFiveFiftyTemp));
+
+  private Alert effectionMotorOverheatAlert =
+      new Alert("MotorOverheat", "Overheat in End Effector effection motor.", AlertType.kWarning);
+  private Alert criticalEfffectionMotorOverheatAlert =
+      new Alert(
+          "MotorOverheat", "Critical Overheat in End Effector effection motor.", AlertType.kError);
+
   public EndEffector(EndEffectorIO endeffectorio) {
     this.endeffectorio = endeffectorio;
     feedback.setIZone(0.08);
     feedback.setTolerance(0.0075);
     feedback.setIntegratorRange(-0.5, 0.5);
+
+    positionMotorOverheat.onTrue(Commands.runOnce(() -> positionMotorOverheatAlert.set(true)));
+    criticalPositionMotorOverheat.onTrue(
+        Commands.runOnce(() -> criticalPositionMotorOverheatAlert.set(true)));
+
+    positionMotorOverheat.onFalse(Commands.runOnce(() -> positionMotorOverheatAlert.set(false)));
+    criticalPositionMotorOverheat.onFalse(
+        Commands.runOnce(() -> criticalPositionMotorOverheatAlert.set(false)));
+
+    effectionMotorOverheat.onTrue(Commands.runOnce(() -> effectionMotorOverheatAlert.set(true)));
+    criticalEffectionMotorOverheat.onTrue(
+        Commands.runOnce(() -> criticalEfffectionMotorOverheatAlert.set(true)));
+
+    effectionMotorOverheat.onFalse(Commands.runOnce(() -> effectionMotorOverheatAlert.set(false)));
+    criticalEffectionMotorOverheat.onFalse(
+        Commands.runOnce(() -> criticalEfffectionMotorOverheatAlert.set(false)));
 
     SmartDashboard.putData(feedback);
     sysIdRoutine =
@@ -230,6 +282,14 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
 
   public Trigger clearForElevatorMotion() {
     return this.clearForElevatorMotion;
+  }
+
+  public Temperature getPositionMotorTemperature() {
+    return endeffectorinputs.positionMotorTemperature;
+  }
+
+  public Temperature getEffectionMotorTemperature() {
+    return endeffectorinputs.effectionMotorTemperature;
   }
 
   /**

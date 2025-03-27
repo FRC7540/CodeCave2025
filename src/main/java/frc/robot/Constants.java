@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Celsius;
+
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -51,6 +54,15 @@ public final class Constants {
       public static final double ElevatorJoystickControlSensitivity = 0.1;
     }
   }
+
+  public static final Temperature warnNeoOneTemp = Celsius.of(0);
+  public static final Temperature warnNeoFiveFiftyTemp = Celsius.of(0);
+
+  public static final Temperature criticalNeoOneTemp = Celsius.of(0);
+  public static final Temperature criticalNeoFiveFiftyTemp = Celsius.of(0);
+
+  public static final Temperature warnVortexTemp = Celsius.of(0);
+  public static final Temperature criticalVortexTemp = Celsius.of(0);
 
   public static final Mode simMode = Mode.SIM;
 

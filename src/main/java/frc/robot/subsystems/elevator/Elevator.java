@@ -22,15 +22,18 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -76,6 +79,34 @@ public class Elevator extends SubsystemBase implements AutoClosing {
               ElevatorConstants.MAX_VELOCITY.in(MetersPerSecond),
               ElevatorConstants.MAX_ACCELERATION.in(MetersPerSecondPerSecond)));
 
+  private Trigger motorAOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getMotorATemperature().gte(Constants.warnVortexTemp));
+  private Trigger criticalMotorAOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getMotorATemperature().gte(Constants.criticalVortexTemp));
+
+  private Alert motorAOverheatAlert =
+      new Alert("MotorOverheat", "Overheat in Elevator motor A.", AlertType.kWarning);
+  private Alert criticalMotorAOverheatAlert =
+      new Alert("MotorOverheat", "Critical Overheat in Elevator motor A.", AlertType.kError);
+
+  private Trigger motorBOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getMotorBTemperature().gte(Constants.warnVortexTemp));
+  private Trigger criticalMotorBOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getMotorBTemperature().gte(Constants.criticalVortexTemp));
+
+  private Alert motorBOverheatAlert =
+      new Alert("MotorOverheat", "Overheat in Elevator motor B.", AlertType.kWarning);
+  private Alert criticalMotorBOverheatAlert =
+      new Alert("MotorOverheat", "Critical Overheat in Elevator motor B.", AlertType.kError);
+
   /* Should we be runnning the control system? */
   @AutoLogOutput(key = "Elevator/controlSystemActive")
   private boolean controlSystemActive = false;
@@ -85,7 +116,19 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   public Elevator(ElevatorIO elevatorIO) {
     this.elevatorIO = elevatorIO;
-    SmartDashboard.putData("PIDSS", feedback);
+
+    motorAOverheat.onTrue(Commands.runOnce(() -> motorAOverheatAlert.set(true)));
+    criticalMotorAOverheat.onTrue(Commands.runOnce(() -> criticalMotorAOverheatAlert.set(true)));
+
+    motorAOverheat.onFalse(Commands.runOnce(() -> motorAOverheatAlert.set(false)));
+    criticalMotorAOverheat.onFalse(Commands.runOnce(() -> criticalMotorAOverheatAlert.set(false)));
+
+    motorBOverheat.onTrue(Commands.runOnce(() -> motorBOverheatAlert.set(true)));
+    criticalMotorBOverheat.onTrue(Commands.runOnce(() -> criticalMotorBOverheatAlert.set(true)));
+
+    motorAOverheat.onFalse(Commands.runOnce(() -> motorAOverheatAlert.set(false)));
+    criticalMotorBOverheat.onFalse(Commands.runOnce(() -> criticalMotorBOverheatAlert.set(false)));
+
     // Create the SysId routine
     sysIdRoutine =
         new SysIdRoutine(
@@ -264,6 +307,14 @@ public class Elevator extends SubsystemBase implements AutoClosing {
 
   public Distance getExtension() {
     return elevatorExtension;
+  }
+
+  public Temperature getMotorATemperature() {
+    return elevatorInputs.motorATemperature;
+  }
+
+  public Temperature getMotorBTemperature() {
+    return elevatorInputs.motorBTemperature;
   }
 
   /**

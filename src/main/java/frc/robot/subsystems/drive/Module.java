@@ -18,8 +18,13 @@ import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.AutoClosing;
 import org.littletonrobotics.junction.Logger;
 
@@ -32,6 +37,30 @@ public class Module implements AutoClosing {
   private final Alert turnDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
+  private Trigger driveMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getDriveTemperature().gte(Constants.warnNeoOneTemp));
+  private Trigger turnMotorOverheat =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getTurnTemperature().gte(Constants.warnNeoFiveFiftyTemp));
+
+  private Trigger driveMotorOverheatCritical =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getDriveTemperature().gte(Constants.criticalNeoOneTemp));
+  private Trigger turnMotorOverheatCritical =
+      new Trigger(
+          Robot.motorTemperatureEventLoop,
+          () -> this.getTurnTemperature().gte(Constants.warnNeoFiveFiftyTemp));
+
+  private Alert driveMotorOverheatAlert;
+  private Alert turnMotorOverheatAlert;
+
+  private Alert driveMotorOverheatCriticalAlert;
+  private Alert turnMotorOverheatCriticalAlert;
+
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
@@ -42,6 +71,44 @@ public class Module implements AutoClosing {
     turnDisconnectedAlert =
         new Alert(
             "Disconnected turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
+
+    driveMotorOverheatAlert =
+        new Alert(
+            "MotorOverheat",
+            "Overheat in module" + Integer.toString(index) + " drive motor.",
+            AlertType.kWarning);
+    turnMotorOverheatAlert =
+        new Alert(
+            "MotorOverheat",
+            "Overheat in module " + Integer.toString(index) + " turn motor.",
+            AlertType.kWarning);
+
+    driveMotorOverheatAlert =
+        new Alert(
+            "MotorOverheat",
+            "Critical Overheat in module " + Integer.toString(index) + " drive motor.",
+            AlertType.kError);
+    turnMotorOverheatAlert =
+        new Alert(
+            "MotorOverheat",
+            "Critical Overheat in module " + Integer.toString(index) + " turn motor.",
+            AlertType.kError);
+
+    driveMotorOverheatCritical.onTrue(
+        Commands.runOnce(() -> driveMotorOverheatCriticalAlert.set(true)));
+    turnMotorOverheatCritical.onTrue(
+        Commands.runOnce(() -> turnMotorOverheatCriticalAlert.set(true)));
+
+    driveMotorOverheat.onTrue(Commands.runOnce(() -> driveMotorOverheatAlert.set(true)));
+    turnMotorOverheat.onTrue(Commands.runOnce(() -> turnMotorOverheatAlert.set(true)));
+
+    driveMotorOverheatCritical.onFalse(
+        Commands.runOnce(() -> driveMotorOverheatCriticalAlert.set(false)));
+    turnMotorOverheatCritical.onFalse(
+        Commands.runOnce(() -> turnMotorOverheatCriticalAlert.set(false)));
+
+    driveMotorOverheat.onFalse(Commands.runOnce(() -> driveMotorOverheatAlert.set(false)));
+    turnMotorOverheat.onFalse(Commands.runOnce(() -> turnMotorOverheatAlert.set(false)));
   }
 
   public void periodic() {
@@ -128,5 +195,13 @@ public class Module implements AutoClosing {
   /** Returns the module velocity in rad/sec. */
   public double getFFCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
+  }
+
+  public Temperature getDriveTemperature() {
+    return inputs.driveTemperature;
+  }
+
+  public Temperature getTurnTemperature() {
+    return inputs.turnTemperature;
   }
 }
