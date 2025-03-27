@@ -1,7 +1,7 @@
 package frc.robot.commands.endeffector;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.MutAngle;
@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorConstants;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -53,18 +54,35 @@ public class JoystickControl extends Command {
                         * Constants.HID
                             .SensitivityMultipliers
                             .EndEffectorJoystickControlSensitivity)));
-    if (intakeEffectionSupplier.getAsBoolean()) {
-      endEffector.runEffectionVolts(Volts.of(6.0));
+
+    if (endEffector.hasCoral().and(ejectEffectionSupplier).getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.CORAL_EJECTION_VOLTAGE);
       return;
-    } else {
-      endEffector.runEffectionVolts(Volts.of(0.0));
     }
 
-    if (ejectEffectionSupplier.getAsBoolean()) {
-      endEffector.runEffectionVolts(Volts.of(-8.0));
+    if (endEffector
+            .getAngle()
+            .isNear(EndEffectorConstants.AnglePresets.SOURCE_PICKUP, Degrees.of(10.0))
+        && intakeEffectionSupplier.getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.CORAL_INTAKE_VOLTAGE);
       return;
-    } else {
-      endEffector.runEffectionVolts(Volts.of(0.0));
+    }
+
+    if (endEffector.hasCoral().and(intakeEffectionSupplier).getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.CORAL_INTAKE_VOLTAGE);
+      return;
+    }
+
+    if (intakeEffectionSupplier.getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.ALAGE_INTAKE_VOLTAGE);
+      return;
+    } else if (ejectEffectionSupplier.getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.ALAGE_EJECTION_VOLTAGE);
+      return;
+    }
+
+    if (endEffector.hasBall().getAsBoolean()) {
+      endEffector.runEffectionVolts(EndEffectorConstants.EffectionPresets.ALAGE_MAINTAIN_VOLTAGE);
     }
   }
 

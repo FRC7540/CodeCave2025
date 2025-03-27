@@ -55,9 +55,9 @@ public class EndEffectorConstants {
   public class EffectionPresets {
     public static final Voltage ALAGE_INTAKE_VOLTAGE = Volts.of(6.0);
     public static final Voltage ALAGE_EJECTION_VOLTAGE = Volts.of(-8.0);
+    public static final Voltage ALAGE_MAINTAIN_VOLTAGE = Volts.of(0.75);
     public static final Voltage CORAL_INTAKE_VOLTAGE = Volts.of(-3.5);
     public static final Voltage CORAL_EJECTION_VOLTAGE = Volts.of(5.0);
-
   }
 
   public class EffectionTuning {

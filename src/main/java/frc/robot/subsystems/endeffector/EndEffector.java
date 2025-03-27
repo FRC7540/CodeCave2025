@@ -288,7 +288,6 @@ public class EndEffector extends SubsystemBase implements AutoClosing {
     return this.hasBall;
   }
 
-  
   public Trigger hasCoral() {
     return this.hasCoral;
   }
