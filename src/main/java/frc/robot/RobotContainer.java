@@ -310,9 +310,9 @@ public class RobotContainer {
             ElevatorSafteyWrapper.HomeElevatorWrapped(elevator, endEffector, drive)
                 .alongWith(RumbleCommands.actionAccepted(operatorController)));
 
-    // elevator.setDefaultCommand(
-    //     ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
-    //         operatorController::getRightY, elevator, endEffector));
+    elevator.setDefaultCommand(
+        ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
+            operatorController::getRightY, elevator, endEffector, drive));
 
     // elevator.setDefaultCommand(
     //     new ElevatorJoystickControl(elevator, operatorController::getRightY));
