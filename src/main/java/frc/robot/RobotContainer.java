@@ -40,6 +40,7 @@ import frc.robot.commands.drivestation.RumbleCommands;
 import frc.robot.commands.elevator.ElevatorPresets;
 import frc.robot.commands.elevator.ElevatorSafteyWrapper;
 import frc.robot.commands.endeffector.AlageIntakeCommands;
+import frc.robot.commands.endeffector.CoralIntakeCommands;
 import frc.robot.commands.endeffector.EndEffectorPresets;
 import frc.robot.commands.endeffector.JoystickControl;
 import frc.robot.subsystems.climber.Climber;
@@ -302,6 +303,9 @@ public class RobotContainer {
             operatorController.leftTrigger()));
 
     operatorController.a().whileTrue(AlageIntakeCommands.IntakeFromGround(endEffector));
+    operatorController.x().whileTrue(AlageIntakeCommands.IntakeFromReef(endEffector));
+
+    operatorController.b().whileTrue(CoralIntakeCommands.IntakeFromSource(endEffector));
 
     operatorController
         .y()
@@ -314,32 +318,29 @@ public class RobotContainer {
         ElevatorSafteyWrapper.ElevatorJoystickControlWrapped(
             operatorController::getRightY, elevator, endEffector, drive));
 
-    // elevator.setDefaultCommand(
-    //     new ElevatorJoystickControl(elevator, operatorController::getRightY));
-
     /* Elevator reef controls */
     operatorController
         .rightBumper()
-        .and(operatorController.a())
+        .and(operatorController.povDown())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelOne(elevator), endEffector, drive));
     operatorController
         .rightBumper()
-        .and(operatorController.b())
+        .and(operatorController.povLeft())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(ElevatorPresets.reefLevelTwo(elevator), endEffector, drive));
     operatorController
         .rightBumper()
-        .and(operatorController.x())
+        .and(operatorController.povRight())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(
                 ElevatorPresets.reefLevelThree(elevator), endEffector, drive));
     operatorController
         .rightBumper()
-        .and(operatorController.y())
+        .and(operatorController.povUp())
         .and(operatorController.leftBumper().negate())
         .whileTrue(
             ElevatorSafteyWrapper.wrap(
@@ -348,12 +349,12 @@ public class RobotContainer {
     /* Other Elevator Controls */
     operatorController
         .leftBumper()
-        .and(operatorController.a())
+        .and(operatorController.povDown())
         .and(operatorController.rightBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.floor(elevator), endEffector, drive));
     operatorController
         .leftBumper()
-        .and(operatorController.b())
+        .and(operatorController.povUp())
         .and(operatorController.rightBumper().negate())
         .whileTrue(ElevatorSafteyWrapper.wrap(ElevatorPresets.barge(elevator), endEffector, drive));
 
